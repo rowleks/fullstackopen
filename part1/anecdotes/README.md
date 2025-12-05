@@ -1,16 +1,23 @@
-# React + Vite
+# Anecdotes App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React application that displays programming anecdotes and allows users to vote on them.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Random Anecdote Display**: Shows a random programming anecdote each time you click "next anecdote"
+- **Voting System**: Vote for your favorite anecdotes
+- **Top Anecdote**: Displays the anecdote with the most votes
+- **State Management**: Uses React's `useState` hook to manage selected anecdote and vote counts
 
-## React Compiler
+## How It Works
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The app displays a collection of programming-related anecdotes. Users can:
+- View a random anecdote
+- Vote for the currently displayed anecdote
+- See which anecdote has received the most votes
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project demonstrates React fundamentals including:
+- Component composition
+- State management with hooks
+- Event handling
+- Conditional rendering
