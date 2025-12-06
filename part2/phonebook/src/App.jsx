@@ -1,35 +1,103 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import contactService from "./services/contact";
+
+const Header = ({ text }) => <h2>{text}</h2>;
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ]);
-
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+  useEffect(() => {
+    contactService.getAll().then((res) => setPersons(res));
+  }, []);
+
+  const updateContactById = (id) => {
+    const personToUpdate = persons.find((person) => person.id === id);
+    if (!personToUpdate) {
+      alert("Contact not found.");
       return;
     }
-    setPersons(
-      persons.concat({
-        name: newName,
-        number: newNumber,
-        id: persons.length + 1,
+    const updatedContact = {
+      ...personToUpdate,
+      number: newNumber,
+    };
+    contactService
+      .updateById(id, updatedContact)
+      .then((res) => {
+        setPersons(persons.map((person) => (person.id === id ? res : person)));
+        setNewName("");
+        setNewNumber("");
       })
-    );
-    setNewName("");
-    setNewNumber("");
+      .catch((error) => {
+        console.log(error);
+        alert(
+          "Failed to update contact. It may have already been removed from the server."
+        );
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+  };
+
+  const addContact = (event) => {
+    event.preventDefault();
+
+    const existingContact = persons.find((person) => person.name === newName);
+
+    if (existingContact) {
+      const confirmUpdate = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one`
+      );
+
+      if (confirmUpdate) {
+        updateContactById(existingContact.id);
+      }
+      return;
+    }
+
+    const newContact = {
+      name: newName,
+      number: newNumber,
+    };
+
+    contactService
+      .create(newContact)
+      .then((res) => {
+        setPersons(persons.concat(res));
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("There was an error adding a contact, please try again");
+      });
+  };
+
+  const deleteContactById = (id) => {
+    const matchingContact = persons.find((person) => person.id === id);
+    if (!matchingContact) {
+      return;
+    }
+
+    const confirmDelete = window.confirm(`Delete ${matchingContact.name}?`);
+
+    if (confirmDelete) {
+      contactService
+        .deleteById(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
+        })
+        .catch((error) => {
+          console.log(error);
+          alert(
+            "Failed to delete contact. It may have already been removed from the server."
+          );
+          setPersons(persons.filter((person) => person.id !== id));
+        });
+    }
   };
 
   const personsToDisplay = () => {
@@ -44,24 +112,29 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <section>
+        <Header text="Phonebook" />
+        <Filter
+          searchQuery={searchQuery}
+          handleSearchChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </section>
 
-      <Filter
-        searchQuery={searchQuery}
-        handleSearchChange={(e) => setSearchQuery(e.target.value)}
-      />
+      <section>
+        <Header text="Add a new" />
+        <PersonForm
+          newName={newName}
+          newNumber={newNumber}
+          handleNameChange={(e) => setNewName(e.target.value)}
+          handleNumberChange={(e) => setNewNumber(e.target.value)}
+          handleSubmit={addContact}
+        />
+      </section>
 
-      <h2>Add a new</h2>
-      <PersonForm
-        newName={newName}
-        newNumber={newNumber}
-        handleNameChange={(e) => setNewName(e.target.value)}
-        handleNumberChange={(e) => setNewNumber(e.target.value)}
-        handleSubmit={handleSubmit}
-      />
-
-      <h2>Numbers</h2>
-      <Persons persons={personsToDisplay()} />
+      <section>
+        <Header text="Number" />
+        <Persons persons={personsToDisplay()} onDelete={deleteContactById} />
+      </section>
     </div>
   );
 };
