@@ -16,6 +16,7 @@ const deleteById = (id, deletedObject) => {
   const req = axios.delete(`${BASEURL}/${id}`, deletedObject);
   return req.then((res) => res.data);
 };
+
 const updateById = (id, updatedObject) => {
   const req = axios.put(`${BASEURL}/${id}`, updatedObject);
   return req.then((res) => res.data);
