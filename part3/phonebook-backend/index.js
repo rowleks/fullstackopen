@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 let persons = [
   {
@@ -27,6 +27,7 @@ let persons = [
 ];
 
 app.use(express.json());
+app.use(express.static("dist"));
 
 // Custom morgan token to log POST request body
 morgan.token("post-data", (req) => {
