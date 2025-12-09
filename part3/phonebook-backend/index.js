@@ -1,30 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const Person = require("./models/persons");
 const PORT = process.env.PORT || 3001;
-
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
 
 app.use(express.json());
 app.use(express.static("dist"));
@@ -45,35 +24,42 @@ app.use(
 );
 
 app.get("/api/persons", (_, res) => {
-  res.json(persons);
+  Person.find({}).then((persons) => {
+    return res.json(persons);
+  });
 });
 
 app.post("/api/persons", (req, res) => {
-  const newPerson = req.body;
+  const { name, number } = req.body;
 
-  if (!newPerson.name || !newPerson.number) {
+  if (!name || !number) {
     res.status(400).json({ error: "name and number are required" });
   } else {
-    const existingPerson = persons.find(
-      (person) => person.name === newPerson.name
-    );
+    Person.exists({ name }).then((existingPerson) => {
+      if (existingPerson) {
+        return res.status(400).json({ error: "name must be unique" });
+      }
 
-    if (existingPerson) {
-      return res.status(400).json({ error: "name must be unique" });
-    }
+      const newPerson = new Person({
+        name,
+        number,
+      });
 
-    newPerson.id = Math.floor(Math.random() * 10000).toString();
-    persons.push(newPerson);
-
-    res.status(201).json(newPerson);
+      newPerson.save().then((savedPerson) => {
+        res.status(201).json(savedPerson);
+      });
+    });
   }
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const personInfo = persons.find((person) => person.id === req.params.id);
-
-  if (!personInfo) res.status(404).end();
-  else res.json(personInfo);
+  Person.findById(req.params.id).then((person) => {
+    if (person) {
+      res.json(person);
+    } else {
+      res.status(404).end();
+    }
+  });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -86,12 +72,13 @@ app.delete("/api/persons/:id", (req, res) => {
 });
 
 app.get("/info", (_, res) => {
-  const totalPersons = persons.length;
-  res.end(
-    `Phonebook has info for ${totalPersons} ${
-      totalPersons === 1 ? "person" : "people"
-    } \n ${new Date()}`
-  );
+  Person.countDocuments().then((count) => {
+    res.end(
+      `Phonebook has info for ${count} ${
+        count === 1 ? "person" : "people"
+      } \n ${new Date()}`
+    );
+  });
 });
 
 app.listen(PORT, () => {
