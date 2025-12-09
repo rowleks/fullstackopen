@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const morgan = require("morgan");
 const PORT = 3001;
 
 let persons = [
@@ -26,6 +27,21 @@ let persons = [
 ];
 
 app.use(express.json());
+
+// Custom morgan token to log POST request body
+morgan.token("post-data", (req) => {
+  if (req.method === "POST") {
+    return JSON.stringify(req.body);
+  }
+  return "";
+});
+
+// Custom format that includes POST data for POST requests
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :post-data"
+  )
+);
 
 app.get("/api/persons", (_, res) => {
   res.json(persons);
