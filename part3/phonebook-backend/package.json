@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "build:ui": "rm -rf dist && cd ../phonebook && pnpm run build && cp -r dist ../phonebook-backend",
+    "build:ui": "shx rm -rf dist && cd ../phonebook && pnpm run build && shx cp -r dist ../phonebook-backend",
     "deploy:full": "pnpm run build:ui && git add . && git commit -m \"Build and Deploy\" && git push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,5 +17,8 @@
   "dependencies": {
     "express": "^5.2.1",
     "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "shx": "^0.4.0"
   }
 }
