@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
     "build:ui": "shx rm -rf dist && cd ../phonebook && pnpm run build && shx cp -r dist ../phonebook-backend",
     "deploy:full": "pnpm run build:ui && git add . && git commit -m \"Build and Deploy\" && git push",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +23,12 @@
     "morgan": "^1.10.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.5.0",
+    "prettier": "^3.7.4",
     "shx": "^0.4.0"
   }
 }
