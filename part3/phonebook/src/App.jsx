@@ -72,6 +72,17 @@ const App = () => {
       })
       .catch((error) => {
         console.log(error);
+
+        const serverErrorMsg = error.response.data.error;
+
+        if (serverErrorMsg) {
+          setMsg({
+            error: serverErrorMsg,
+            success: "",
+          });
+          return;
+        }
+
         setPersons(persons.filter((person) => person.id !== id));
         setMsg({
           error: `Failed to update ${updatedContact.name}. It may have already been removed from the server.`,
@@ -80,7 +91,7 @@ const App = () => {
       });
   };
 
-  const addContact = (event) => {
+  const handleAddContact = (event) => {
     event.preventDefault();
 
     const existingContact = persons.find((person) => person.name === newName);
@@ -111,6 +122,15 @@ const App = () => {
       })
       .catch((error) => {
         console.log(error);
+        const serverErrorMsg = error.response.data.error;
+
+        if (serverErrorMsg) {
+          setMsg({
+            error: serverErrorMsg,
+            success: "",
+          });
+          return;
+        }
         setMsg({
           error: `Failed to add ${newContact.name}. Please try again.`,
           success: "",
@@ -118,7 +138,7 @@ const App = () => {
       });
   };
 
-  const deleteContactById = (id) => {
+  const handleDeleteContactById = (id) => {
     const matchingContact = persons.find((person) => person.id === id);
     if (!matchingContact) {
       setMsg({
@@ -181,13 +201,16 @@ const App = () => {
           newNumber={newNumber}
           handleNameChange={(e) => setNewName(e.target.value)}
           handleNumberChange={(e) => setNewNumber(e.target.value)}
-          handleSubmit={addContact}
+          handleSubmit={handleAddContact}
         />
       </section>
 
       <section>
         <Header text="Number" />
-        <Persons persons={personsToDisplay()} onDelete={deleteContactById} />
+        <Persons
+          persons={personsToDisplay()}
+          onDelete={handleDeleteContactById}
+        />
       </section>
     </div>
   );

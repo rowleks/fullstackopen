@@ -125,7 +125,7 @@ app.use((_, res) => {
   res.status(404).send({ error: "unknown endpoint" });
 });
 
-const errorHandler = (error, req, res, next) => {
+const errorHandler = (error, _, res, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
@@ -140,4 +140,5 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+  console.log("Connecting to MongoDB...");
 });
