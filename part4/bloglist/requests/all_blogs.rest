@@ -1,0 +1,12 @@
+GET http://localhost:3030/api/blogs
+
+###
+POST http://localhost:3030/api/blogs
+Content-Type: application/json
+
+{
+    "title": "How Meta Will Change the World",
+    "author": "Mark Zuckerberg",
+    "url": "https://facebook.com",
+    "likes": 20
+}
