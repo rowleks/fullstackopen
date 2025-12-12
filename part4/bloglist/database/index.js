@@ -6,6 +6,8 @@ const { MongoMemoryServer } = require('mongodb-memory-server')
 let mongoServer
 
 const connectToMongo = async uri => {
+  logger.info('connecting to', uri)
+
   try {
     await mongoose.connect(uri)
     logger.info('connected to MongoDB')
@@ -16,8 +18,6 @@ const connectToMongo = async uri => {
 }
 
 const connect = async () => {
-  logger.info('connecting to', config.MONGODB_URI)
-
   if (process.env.NODE_ENV === 'test') {
     mongoServer = await MongoMemoryServer.create()
     await connectToMongo(mongoServer.getUri())

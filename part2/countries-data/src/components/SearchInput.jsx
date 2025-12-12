@@ -9,3 +9,7 @@ const SearchInput = ({ searchQuery, handleSearch }) => {
 
 export default SearchInput;
 
+
+
+
+
