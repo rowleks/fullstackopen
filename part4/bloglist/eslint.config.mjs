@@ -1,21 +1,17 @@
 import js from '@eslint/js'
 import globals from 'globals'
-import prettierPlugin from 'eslint-plugin-prettier'
-import prettierConfig from 'eslint-config-prettier'
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import { defineConfig } from 'eslint/config'
 
-export default [
+export default defineConfig([
   // Recommended JS rules
   js.configs.recommended,
 
-  // Prettier config to disable conflicting rules
-  prettierConfig,
+  // Prettier recommended config (includes plugin, rules, and disables conflicts)
+  eslintPluginPrettierRecommended,
 
   {
     files: ['**/*.{js,mjs,cjs}'],
-
-    plugins: {
-      prettier: prettierPlugin,
-    },
 
     languageOptions: {
       ecmaVersion: 'latest',
@@ -26,10 +22,7 @@ export default [
     },
 
     rules: {
-      // Prettier integration
-      'prettier/prettier': ['error'],
-
-      // Your custom rules
+      // Custom rules
       eqeqeq: 'error',
       'no-trailing-spaces': 'error',
       'object-curly-spacing': ['error', 'always'],
@@ -59,4 +52,4 @@ export default [
   {
     ignores: ['dist/**', 'node_modules/**'],
   },
-]
+])
