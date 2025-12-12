@@ -1,0 +1,44 @@
+const mongoose = require('mongoose')
+const config = require('../utils/config')
+const logger = require('../utils/logger')
+const { MongoMemoryServer } = require('mongodb-memory-server')
+
+let mongoServer
+
+const connectToMongo = async uri => {
+  try {
+    await mongoose.connect(uri)
+    logger.info('connected to MongoDB')
+  } catch (error) {
+    logger.error('error connection to MongoDB:', error.message)
+    process.exit(1)
+  }
+}
+
+const connect = async () => {
+  logger.info('connecting to', config.MONGODB_URI)
+
+  if (process.env.NODE_ENV === 'test') {
+    mongoServer = await MongoMemoryServer.create()
+    await connectToMongo(mongoServer.getUri())
+  } else {
+    await connectToMongo(config.MONGODB_URI)
+  }
+}
+
+const close = async () => {
+  await mongoose.connection.close()
+  if (mongoServer) {
+    await mongoServer.stop()
+  }
+}
+
+const clear = async () => {
+  const { collections } = mongoose.connection
+  for (const key in collections) {
+    const collection = collections[key]
+    await collection.deleteMany()
+  }
+}
+
+module.exports = { connect, close, clear }
