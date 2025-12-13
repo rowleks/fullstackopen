@@ -40,7 +40,11 @@ const initialBlogs = [
 ]
 
 const generatePhantomId = async () => {
-  const tempBlog = new Blog({ title: 'This is a temporal blog' })
+  const tempBlog = new Blog({
+    title: 'temp',
+    author: 'temp',
+    url: 'http://temp.com',
+  })
   await tempBlog.save()
   await tempBlog.deleteOne()
 

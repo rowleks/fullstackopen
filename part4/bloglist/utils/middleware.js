@@ -16,7 +16,8 @@ const unknownEndpoint = (_, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
-const errorHandler = (error, _, response, next) => {
+/* eslint-disable no-unused-vars*/
+const errorHandler = (error, _, response, __) => {
   logger.error(error.message)
 
   if (error.name === 'CastError') {
@@ -24,8 +25,6 @@ const errorHandler = (error, _, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
-
-  next(error)
 }
 
 module.exports = {
