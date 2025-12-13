@@ -7,7 +7,7 @@ const {
   calculateFaveBlog,
   mostBlogs,
   mostLikes,
-} = require('../listHelpers')
+} = require('../utils/listHelpers')
 
 test('dummy returns one', () => {
   const blogs = []

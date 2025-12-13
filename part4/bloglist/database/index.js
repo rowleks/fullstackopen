@@ -37,7 +37,7 @@ const clear = async () => {
   const { collections } = mongoose.connection
   for (const key in collections) {
     const collection = collections[key]
-    await collection.deleteMany()
+    await collection.deleteMany({})
   }
 }
 
