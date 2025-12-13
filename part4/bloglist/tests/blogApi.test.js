@@ -179,6 +179,12 @@ describe('when db is seeded with data', () => {
   })
 })
 
+describe('Unknown endpoint', () => {
+  test('returns 404 for non-existent routes', async () => {
+    await api.get('/api/non-existent-route').expect(404)
+  })
+})
+
 after(async () => {
   await closeDbConnection()
 })
