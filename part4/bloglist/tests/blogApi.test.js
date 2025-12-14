@@ -11,6 +11,7 @@ const api = supertest(app)
 describe('when db is seeded with data', () => {
   beforeEach(async () => {
     await clearDbData()
+    await apiHelpers.createInitialUser()
     await Blog.insertMany(apiHelpers.initialBlogs)
   })
 

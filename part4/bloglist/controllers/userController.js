@@ -3,7 +3,12 @@ const bcrypt = require('bcryptjs')
 const User = require('../models/user')
 
 router.get('/', async (_, res) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate('blogs', {
+    title: 1,
+    author: 1,
+    url: 1,
+    likes: 1,
+  })
   res.json(users)
 })
 
@@ -24,7 +29,9 @@ router.post('/', async (req, res, next) => {
       name,
       passwordHash,
     })
+
     const savedUser = await user.save()
+
     res.status(201).json(savedUser)
   } catch (error) {
     next(error)

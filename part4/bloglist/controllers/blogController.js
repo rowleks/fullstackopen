@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 router.get('/', async (_, res) => {
   const blogs = await Blog.find({}).populate('users', { username: 1, name: 1 })
@@ -8,8 +9,14 @@ router.get('/', async (_, res) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const blog = new Blog(req.body)
+    const user = await User.findOne({})
+    if (!user) {
+      return res.status(400).json({ error: 'no user found in database' })
+    }
+    const blog = new Blog({ ...req.body, users: [user._id] })
     const savedBlog = await blog.save()
+    await User.findByIdAndUpdate(user._id, { $push: { blogs: savedBlog._id } })
+    await savedBlog.populate('users', { username: 1, name: 1 })
     res.status(201).json(savedBlog)
   } catch (error) {
     next(error)
