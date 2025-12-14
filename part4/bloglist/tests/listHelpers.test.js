@@ -71,4 +71,12 @@ describe('most blogs/likes', () => {
     }
     assert.deepStrictEqual(mostLikes(blogList), expectedResult)
   })
+
+  test('returns an empty object for most blogs if input is an empty array', () => {
+    assert.deepStrictEqual(mostBlogs([]), {})
+  })
+
+  test('returns an empty object for most likes if input is an empty array', () => {
+    assert.deepStrictEqual(mostLikes([]), {})
+  })
 })
