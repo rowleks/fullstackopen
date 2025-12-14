@@ -8,7 +8,7 @@
     "dev": "cross-env NODE_ENV=development node --watch server.js",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "cross-env NODE_ENV=test node --test",
+    "test": "cross-env NODE_ENV=test node --test --test-concurrency=1",
     "coverage": "pnpm test --experimental-test-coverage"
   },
   "keywords": [],
@@ -16,6 +16,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.14.0",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",

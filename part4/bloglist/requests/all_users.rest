@@ -1,0 +1,11 @@
+GET http://localhost:3030/api/users
+
+###
+POST http://localhost:3030/api/users
+Content-Type: application/json
+
+{
+    "username": "ele",
+    "name": "Eleojo Momoh",
+    "password": "El"
+}

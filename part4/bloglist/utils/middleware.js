@@ -3,7 +3,11 @@ const logger = require('./logger')
 
 morgan.token('post-data', req => {
   if (req.method === 'POST') {
-    return JSON.stringify(req.body)
+    const body = { ...req.body }
+    if (body.password) {
+      body.password = '[HIDDEN]'
+    }
+    return JSON.stringify(body)
   }
   return ''
 })
@@ -17,13 +21,18 @@ const unknownEndpoint = (_, response) => {
 }
 
 /* eslint-disable no-unused-vars*/
-const errorHandler = (error, _, response, __) => {
+const errorHandler = (error, req, response, __) => {
   logger.error(error.message)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
+  } else if (
+    error.name === 'MongoServerError' &&
+    error.message.includes('E11000 duplicate key error')
+  ) {
+    return response.status(400).json({ error: 'username already exits' })
   }
 }
 
