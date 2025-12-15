@@ -84,7 +84,15 @@ describe('When db is initialized with one user', () => {
   })
 
   describe('GET /api/users', () => {
+    //Login to with the test root user before the create a blog post
     beforeEach(async () => {
+      const loginResult = await api
+        .post('/api/login')
+        .send({ username: 'root', password: 'testuser123' })
+        .expect(200)
+
+      const { token } = loginResult.body
+
       const newBlog = {
         title: 'Testing post endpoint',
         author: 'Rowland Momoh',
@@ -92,8 +100,13 @@ describe('When db is initialized with one user', () => {
         likes: 15,
       }
 
-      await api.post('/api/blogs').send(newBlog).expect(201)
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog)
+        .expect(201)
     })
+
     test('db returns all users with associated blogs', async () => {
       const result = await api
         .get('/api/users')
@@ -123,13 +136,13 @@ describe('When db has no users', () => {
     const result = await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(400)
+      .expect(401)
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await apiHelpers.getBlogsInDb()
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
 
-    assert(result.body.error.includes('no user found in database'))
+    assert(result.body.error.includes('invalid token'))
   })
 })
 

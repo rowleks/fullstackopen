@@ -36,7 +36,21 @@ describe('when db is seeded with data', () => {
   })
 
   describe('POST /api/blogs,', () => {
+    let jwtToken = null
+
+    //Login to with the test root user before any POST operation
+    beforeEach(async () => {
+      const loginResult = await api
+        .post('/api/login')
+        .send({ username: 'root', password: 'testuser123' })
+        .expect(200)
+
+      jwtToken = loginResult.body.token
+    })
+
     test('succeeds with status code 201 if all required properties are included and increases total blog count in db', async () => {
+      const blogsAtStart = await apiHelpers.getBlogsInDb()
+
       const newBlog = {
         title: 'Testing post endpoint',
         author: 'Rowland Momoh',
@@ -44,10 +58,9 @@ describe('when db is seeded with data', () => {
         likes: 15,
       }
 
-      const blogsAtStart = await apiHelpers.getBlogsInDb()
-
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${jwtToken}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -60,16 +73,17 @@ describe('when db is seeded with data', () => {
     })
 
     test('succeeds with status code 201 if likes property is missing and defaults to 0', async () => {
+      const blogsAtStart = await apiHelpers.getBlogsInDb()
+
       const newBlog = {
         title: 'Testing post endpoint without likes',
         author: 'Rowland Momoh',
         url: 'http://fso.com/testing-post-endpoint-without-likes',
       }
 
-      const blogsAtStart = await apiHelpers.getBlogsInDb()
-
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${jwtToken}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -80,15 +94,21 @@ describe('when db is seeded with data', () => {
     })
 
     test('fails with status code 400 if required properties are missing', async () => {
+      const blogsAtStart = await apiHelpers.getBlogsInDb()
+
       const newBlog = {
         author: 'Rowland Momoh',
         likes: 10,
       }
 
-      await api.post('/api/blogs').send(newBlog).expect(400)
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send(newBlog)
+        .expect(400)
 
       const blogsAtEnd = await apiHelpers.getBlogsInDb()
-      assert.strictEqual(blogsAtEnd.length, apiHelpers.initialBlogs.length)
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
     })
   })
 
