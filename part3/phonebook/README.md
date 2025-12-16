@@ -1,18 +1,16 @@
-# Phonebook Application
+# Phonebook (Part 3)
 
-A full-stack phonebook application built with React and Vite, featuring CRUD operations for managing contacts. The application uses a JSON Server backend for data persistence and includes real-time error handling with automatic notifications.
+A React application for managing phone contacts, demonstrating the use of React hooks, forms, and communication with a backend server. The application allows users to add, view, and delete contacts with name and number information.
 
 ## Features
 
-- **Create Contacts**: Add new contacts with name and phone number
-- **Read Contacts**: View all saved contacts in a list
-- **Update Contacts**: Update existing contact phone numbers (with confirmation prompt)
-- **Delete Contacts**: Remove contacts from the phonebook (with confirmation prompt)
-- **Search/Filter**: Search contacts by name in real-time
-- **Error Handling**: Comprehensive error states with user-friendly notifications
-- **Success Notifications**: Visual feedback for successful operations
-- **Auto-dismiss Messages**: Notifications automatically disappear after 5 seconds
-- **Duplicate Detection**: Prevents duplicate names and offers to update instead
+- **Contact List**: Displays all saved contacts with names and phone numbers
+- **Add New Contacts**: Form to add new contacts with name and number
+- **Delete Contacts**: Remove contacts from the phonebook
+- **Search Functionality**: Filter contacts by name in real-time
+- **Form Validation**: Prevents duplicate names and ensures proper phone number format
+- **Error Handling**: Displays notifications for successful operations and errors
+- **JSON Server Backend**: Uses a simple JSON server for data persistence
 
 ## Prerequisites
 
