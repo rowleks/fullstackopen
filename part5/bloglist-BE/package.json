@@ -1,0 +1,39 @@
+{
+  "name": "bloglist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node server.js",
+    "dev": "cross-env NODE_ENV=development node --watch server.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "cross-env NODE_ENV=test node --test --test-concurrency=1",
+    "coverage": "pnpm test --experimental-test-coverage"
+  },
+  "keywords": [],
+  "author": "Rowland Momoh",
+  "license": "MIT",
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "lodash": "^4.17.21",
+    "mongoose": "^9.0.1",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.5.0",
+    "mongodb-memory-server": "^10.4.1",
+    "prettier": "^3.7.4",
+    "shx": "^0.4.0",
+    "supertest": "^7.1.4"
+  }
+}
