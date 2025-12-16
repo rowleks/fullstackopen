@@ -1,30 +1,20 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
-
-const extractToken = authHeader => {
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.replace('Bearer ', '')
-  }
-  return null
-}
+const { userExtractor } = require('../utils/middleware')
 
 router.get('/', async (_, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   res.json(blogs)
 })
 
-router.post('/', async (req, res, next) => {
-  const token = extractToken(req.get('authorization'))
-  console.log(token)
-  const tokenPayload = jwt.verify(token, process.env.JWT_SECRET)
-  if (!tokenPayload.id) {
-    return res.status(401).json({ error: 'invalid token' })
-  }
-
+router.post('/', userExtractor, async (req, res, next) => {
   try {
-    const user = await User.findById(tokenPayload.id)
+    if (!req.user) {
+      return res.status(401).json({ error: 'invalid token' })
+    }
+
+    const user = await User.findById(req.user.id)
     if (!user) {
       return res.status(400).json({ error: 'userId missing or invalid' })
     }
@@ -38,14 +28,24 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', userExtractor, async (req, res, next) => {
   try {
-    const deletedBlog = await Blog.findByIdAndDelete(req.params.id)
-    if (deletedBlog) {
-      res.status(204).end()
-    } else {
-      res.status(404).json({ error: 'Blog not found' })
+    if (!req.user) {
+      return res.status(401).json({ error: 'invalid token' })
     }
+
+    const blog = await Blog.findById(req.params.id)
+    if (!blog) {
+      return res.status(404).json({ error: 'blog not found' })
+    }
+
+    if (blog.user.toString() !== req.user.id) {
+      return res.status(401).json({ error: 'unauthorized to delete this blog' })
+    }
+
+    await Blog.findByIdAndDelete(req.params.id)
+
+    res.status(204).end()
   } catch (error) {
     next(error)
   }

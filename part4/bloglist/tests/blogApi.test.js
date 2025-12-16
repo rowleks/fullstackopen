@@ -3,6 +3,7 @@ const { test, after, beforeEach, describe } = require('node:test')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const { close: closeDbConnection, clear: clearDbData } = require('../database')
 const apiHelpers = require('./apiHelpers')
 
@@ -12,7 +13,12 @@ describe('when db is seeded with data', () => {
   beforeEach(async () => {
     await clearDbData()
     await apiHelpers.createInitialUser()
-    await Blog.insertMany(apiHelpers.initialBlogs)
+    const user = await User.findOne({ username: 'root' })
+    const blogsWithUser = apiHelpers.initialBlogs.map(blog => ({
+      ...blog,
+      user: user._id,
+    }))
+    await Blog.insertMany(blogsWithUser)
   })
 
   describe('GET /api/blogs', () => {
@@ -113,11 +119,25 @@ describe('when db is seeded with data', () => {
   })
 
   describe('DELETE /api/blogs/:id', () => {
+    let jwtToken = null
+
+    beforeEach(async () => {
+      const loginResult = await api
+        .post('/api/login')
+        .send({ username: 'root', password: 'testuser123' })
+        .expect(200)
+
+      jwtToken = loginResult.body.token
+    })
+
     test('succeeds with status code 204 if id is valid', async () => {
       const blogsAtStart = await apiHelpers.getBlogsInDb()
       const blogToDelete = blogsAtStart[0]
 
-      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(204)
 
       const blogsAtEnd = await apiHelpers.getBlogsInDb()
 
@@ -130,13 +150,27 @@ describe('when db is seeded with data', () => {
     test('fails with status code 400 if id is invalid', async () => {
       const invalidId = '5a3d5da59070081a82a3445'
 
-      await api.delete(`/api/blogs/${invalidId}`).expect(400)
+      await api
+        .delete(`/api/blogs/${invalidId}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(400)
     })
 
     test('fails with status code 404 if id does not exist', async () => {
       const phantomId = await apiHelpers.generatePhantomId()
 
-      await api.delete(`/api/blogs/${phantomId}`).expect(404)
+      await api
+        .delete(`/api/blogs/${phantomId}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(404)
+    })
+
+    test('fails with status code 401 if token is invalid', async () => {
+      const blogsAtStart = await apiHelpers.getBlogsInDb()
+
+      console.log(blogsAtStart)
+
+      await api.delete(`/api/blogs/${blogsAtStart[0].id}`).expect(401)
     })
   })
 

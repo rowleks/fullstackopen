@@ -1,5 +1,6 @@
 const morgan = require('morgan')
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
 
 morgan.token('post-data', req => {
   if (req.method === 'POST') {
@@ -15,6 +16,25 @@ morgan.token('post-data', req => {
 const requestLogger = morgan(
   ':method :url :status :res[content-length] - :response-time ms :post-data'
 )
+
+const tokenExtractor = (req, _, next) => {
+  const authHeader = req.get('authorization')
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    req.token = authHeader.replace('Bearer ', '')
+  } else {
+    req.token = null
+  }
+  next()
+}
+
+const userExtractor = (req, _, next) => {
+  if (req.token) {
+    req.user = jwt.verify(req.token, process.env.JWT_SECRET)
+  } else {
+    req.user = null
+  }
+  next()
+}
 
 const unknownEndpoint = (_, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -53,4 +73,6 @@ module.exports = {
   unknownEndpoint,
   errorHandler,
   requestLogger,
+  tokenExtractor,
+  userExtractor,
 }
