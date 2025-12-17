@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import blogService from '../services/blogService'
+import CreateBlogForm from './CreateBlogForm'
+import Notification from './Notification'
+import { getLoggedUser } from '../utils/getLoggedUser'
 
 const BlogItem = ({ blog }) => {
   return (
@@ -11,21 +14,24 @@ const BlogItem = ({ blog }) => {
   )
 }
 
-const BlogSection = ({ username, onLogout }) => {
+const BlogSection = ({ onLogout }) => {
   const [blogs, setBlogs] = useState([])
-  const [error, setError] = useState('')
+  const [msg, setMsg] = useState({ error: '', success: '' })
   const [loading, setLoading] = useState(false)
+
+  const loggedUser = getLoggedUser()
+  const username = loggedUser ? loggedUser.user.username : ''
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         setLoading(true)
-        setError('')
+        setMsg({ error: '', success: '' })
         const data = await blogService.getAllBlogs()
         setBlogs(data)
       } catch (error) {
         console.error('Error fetching blogs:', error)
-        setError('Error fetching blogs')
+        setMsg({ error: 'Error fetching blogs', success: '' })
       } finally {
         setLoading(false)
       }
@@ -34,20 +40,39 @@ const BlogSection = ({ username, onLogout }) => {
     fetchBlogs()
   }, [])
 
+  useEffect(() => {
+    if (msg.success || msg.error) {
+      const timeoutId = setTimeout(() => {
+        setMsg({ error: '', success: '' })
+      }, 5000)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [msg.error, msg.success])
+
   return (
     <div>
       <h2>Blogs</h2>
       <p>
-        Welcome <b>{username}</b> <button onClick={onLogout}>Logout</button>
+        Welcome <b>{username} </b>
+        <button onClick={onLogout}>Logout</button>
       </p>
 
+      <div>
+        {loading && <p>Loading blogs...</p>}
+        <Notification successMsg={msg.success} errorMsg={msg.error} />
+      </div>
+      <section>
+        <CreateBlogForm setMsg={setMsg} setBlogs={setBlogs} blogs={blogs} />
+      </section>
       <section>
         <h3>Your Saved Blogs</h3>
-        {loading && <p>Loading blogs...</p>}
-        {error && <p className="error">{error}</p>}
-        {blogs.map((blog, idx) => (
-          <BlogItem key={idx} blog={blog} />
-        ))}
+        {blogs
+          .slice()
+          .reverse()
+          .map((blog, idx) => (
+            <BlogItem key={idx} blog={blog} />
+          ))}
       </section>
     </div>
   )

@@ -2,27 +2,32 @@ import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
 import loginService from './services/loginService'
 import BlogSection from './components/BlogSection'
+import Notification from './components/Notification'
+import { getLoggedUser } from './utils/getLoggedUser'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [msg, setMsg] = useState({ error: '', success: '' })
-  const [user, setUser] = useState(null)
+  const [error, setError] = useState('')
+  const [user, setUser] = useState(getLoggedUser)
 
   const onLogin = async e => {
     e.preventDefault()
     try {
       const userData = await loginService.login({ username, password })
+
+      window.localStorage.setItem('loggedUser', JSON.stringify(userData))
       setUser(userData)
       setUsername('')
       setPassword('')
-    } catch (e) {
-      setMsg({ error: 'Incorrect username or password', success: '' })
-      console.error(e)
+    } catch (error) {
+      setError('Incorrect username or password')
+      console.error(error)
     }
   }
 
   const handleLogout = () => {
+    window.localStorage.removeItem('loggedUser')
     setUser(null)
   }
 
@@ -35,22 +40,31 @@ const App = () => {
   }
 
   useEffect(() => {
-    if (msg.success || msg.error) {
+    if (error) {
       const timeoutId = setTimeout(() => {
-        setMsg({ error: '', success: '' })
+        setError('')
       }, 5000)
 
       return () => clearTimeout(timeoutId)
     }
-  }, [msg.success, msg.error])
+  }, [error])
 
   if (!user) {
-    return <LoginForm {...loginFormProps} />
+    return (
+      <div>
+        <h1>Log in to the application</h1>
+        {!error && (
+          <p className="info">Please login to view your saved blogs</p>
+        )}
+        <Notification errorMsg={error} />
+        <LoginForm {...loginFormProps} />
+      </div>
+    )
   }
 
   return (
     <>
-      <BlogSection username={user.user.username} onLogout={handleLogout} />
+      <BlogSection onLogout={handleLogout} />
     </>
   )
 }
