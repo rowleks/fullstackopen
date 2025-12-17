@@ -9,6 +9,8 @@ const LoginForm = ({
     <div>
       <h1>Log in to the application</h1>
 
+      <p className="info">Please login to view your saved blogs</p>
+
       <form onSubmit={onLogin}>
         <div>
           <label>

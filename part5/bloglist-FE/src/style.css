@@ -1,0 +1,40 @@
+.success,
+.error,
+.info {
+  padding: 0.5rem;
+  border: 2px solid;
+  margin-block: 1rem;
+}
+
+.success {
+  background-color: #d6ffd6;
+  color: #047c04;
+  border-color: #007a00;
+}
+
+.error {
+  background-color: #ffd6d6;
+  color: #c0392b;
+  border-color: #ad2121;
+}
+
+.info {
+  background-color: #e0f2f7;
+  color: #2196f3;
+  border-color: #1976d2;
+}
+
+.success p,
+.error p,
+.info p {
+  margin: 0;
+}
+
+img {
+  width: 100%;
+  display: block;
+}
+
+b {
+  text-transform: capitalize;
+}
