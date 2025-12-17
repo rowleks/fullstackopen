@@ -1,31 +1,4 @@
-import { useState } from 'react'
-import { getLoggedUser } from '../utils/getLoggedUser'
-import blogService from '../services/blogService'
-
-const CreateBlogForm = ({ setMsg, setBlogs, blogs }) => {
-  const [formInput, setFormInput] = useState({ title: '', author: '', url: '' })
-
-  const { token } = getLoggedUser()
-
-  const handleSubmit = async e => {
-    e.preventDefault()
-
-    try {
-      blogService.setToken(token)
-
-      const newBlog = { ...formInput }
-      const result = await blogService.createBlog(newBlog)
-
-      setBlogs(blogs.concat(result))
-      setMsg({ error: '', success: 'Blog created successfully' })
-      setFormInput({ title: '', author: '', url: '' })
-    } catch (error) {
-      console.error(error)
-
-      const serverErrorMsg = error.response.data.error
-      setMsg({ error: serverErrorMsg, success: '' })
-    }
-  }
+const CreateNewBlogForm = ({ handleSubmit, setFormInput, formInput }) => {
   return (
     <div>
       <h3>Create New Blog</h3>
@@ -85,4 +58,4 @@ const CreateBlogForm = ({ setMsg, setBlogs, blogs }) => {
   )
 }
 
-export default CreateBlogForm
+export default CreateNewBlogForm

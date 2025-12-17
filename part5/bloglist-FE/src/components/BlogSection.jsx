@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import blogService from '../services/blogService'
-import CreateBlogForm from './CreateBlogForm'
 import Notification from './Notification'
 import { getLoggedUser } from '../utils/getLoggedUser'
+import CreateBlogSection from './CreateBlogSection'
 
 const BlogItem = ({ blog }) => {
   return (
@@ -63,7 +63,7 @@ const BlogSection = ({ onLogout }) => {
         <Notification successMsg={msg.success} errorMsg={msg.error} />
       </div>
       <section>
-        <CreateBlogForm setMsg={setMsg} setBlogs={setBlogs} blogs={blogs} />
+        <CreateBlogSection setMsg={setMsg} setBlogs={setBlogs} blogs={blogs} />
       </section>
       <section>
         <h3>Your Saved Blogs</h3>
