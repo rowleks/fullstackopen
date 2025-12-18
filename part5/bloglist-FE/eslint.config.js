@@ -41,6 +41,7 @@ export default defineConfig([
       'object-curly-spacing': ['error', 'always'],
       'arrow-spacing': ['error', { before: true, after: true }],
       'no-console': 'off',
+      semi: ['error', 'never'],
       'prefer-const': 'error',
       'prefer-arrow-callback': 'warn',
       'object-shorthand': ['warn', 'always'],
