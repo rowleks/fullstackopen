@@ -52,7 +52,9 @@ const CreateNewBlogForm = ({ handleSubmit, setFormInput, formInput }) => {
         </div>
         <br />
 
-        <button type="submit">Create</button>
+        <button className="create-btn" type="submit">
+          Create
+        </button>
       </form>
     </div>
   )

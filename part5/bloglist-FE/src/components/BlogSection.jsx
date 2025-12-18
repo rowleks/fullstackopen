@@ -4,11 +4,75 @@ import Notification from './Notification'
 import { getLoggedUser } from '../utils/getLoggedUser'
 import CreateBlogSection from './CreateBlogSection'
 
-const BlogItem = ({ blog }) => {
+const BlogItem = ({ blog, blogList, setBlogs, setMsg }) => {
+  const [expanded, setExpanded] = useState(false)
+  const loggedUser = getLoggedUser()
+
+  const handleLikeCountUpdate = async () => {
+    try {
+      blogService.setToken(loggedUser.token)
+
+      const updateBlogPayload = { ...blog, likes: blog.likes + 1 }
+      const result = await blogService.updateBlog(updateBlogPayload)
+      const updatedBlogList = blogList.map(blog =>
+        blog.id === result.id ? result : blog
+      )
+      setBlogs(updatedBlogList)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}?`
+    )
+    if (confirmDelete) {
+      try {
+        blogService.setToken(loggedUser.token)
+        await blogService.deleteBlog(blog.id)
+        const updatedBlogList = blogList.filter(b => b.id !== blog.id)
+        setBlogs(updatedBlogList)
+      } catch (error) {
+        console.log(error)
+        const serverErrorMsg = error.response.data.error
+        setMsg({ error: serverErrorMsg, success: '' })
+      }
+    }
+  }
+
+  const handleExpansion = () => {
+    setExpanded(!expanded)
+  }
   return (
     <>
-      <div>
-        {blog.title} by <em>{blog.author}</em>
+      <div className="blog-item">
+        <p>
+          {blog.title} {''}
+          <button onClick={handleExpansion}>
+            {!expanded ? 'View' : 'Hide'}
+          </button>
+        </p>
+        {expanded && (
+          <div>
+            <a href={blog.url} target="_blank" rel="noreferrer">
+              {blog.url}
+            </a>
+            <p>
+              Likes: {blog.likes}{' '}
+              <button className="like-btn" onClick={handleLikeCountUpdate}>
+                Like
+              </button>
+            </p>
+            <p> {blog.author}</p>
+
+            {loggedUser.user.id === blog.user.id && (
+              <button className="delete-btn" onClick={handleDelete}>
+                Remove
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </>
   )
@@ -55,11 +119,12 @@ const BlogSection = ({ onLogout }) => {
       <h2>Blogs</h2>
       <p>
         Welcome <b>{username} </b>
-        <button onClick={onLogout}>Logout</button>
+        <button className="logout-btn" onClick={onLogout}>
+          Logout
+        </button>
       </p>
 
       <div>
-        {loading && <p>Loading blogs...</p>}
         <Notification successMsg={msg.success} errorMsg={msg.error} />
       </div>
       <section>
@@ -67,12 +132,21 @@ const BlogSection = ({ onLogout }) => {
       </section>
       <section>
         <h3>Your Saved Blogs</h3>
-        {blogs
-          .slice()
-          .reverse()
-          .map((blog, idx) => (
-            <BlogItem key={idx} blog={blog} />
-          ))}
+        {loading && <p>Loading blogs...</p>}
+        <div className="blogitem-wrapper">
+          {blogs
+            .slice()
+            .sort((a, b) => b.likes - a.likes)
+            .map(blog => (
+              <BlogItem
+                key={blog.id}
+                blog={blog}
+                blogList={blogs}
+                setBlogs={setBlogs}
+                setMsg={setMsg}
+              />
+            ))}
+        </div>
       </section>
     </div>
   )

@@ -51,19 +51,23 @@ router.delete('/:id', userExtractor, async (req, res, next) => {
   }
 })
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', userExtractor, async (req, res, next) => {
   const { title, author, url, likes } = req.body
   try {
-    const updatedBlog = await Blog.findByIdAndUpdate(
-      req.params.id,
-      { title, author, url, likes },
-      { new: true, runValidators: true, context: 'query' }
-    )
-    if (updatedBlog) {
-      res.json(updatedBlog)
-    } else {
-      res.status(404).json({ error: 'Blog not found' })
+    if (!req.user) {
+      return res.status(401).json({ error: 'invalid token' })
     }
+    const blog = await Blog.findById(req.params.id)
+    if (!blog) return res.status(404).json({ error: 'Blog not found' })
+
+    blog.title = title || blog.title
+    blog.author = author || blog.author
+    blog.url = url || blog.url
+    blog.likes = likes ? likes : blog.likes
+
+    const updatedBlog = await blog.save()
+    await updatedBlog.populate('user', { username: 1, name: 1 })
+    res.json(updatedBlog)
   } catch (error) {
     next(error)
   }

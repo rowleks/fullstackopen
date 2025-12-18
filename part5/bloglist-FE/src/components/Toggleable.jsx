@@ -17,7 +17,9 @@ const Toggleable = ({ buttonLabel, ref, children }) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{buttonLabel}</button>
+        <button className="create-btn" onClick={toggleVisibility}>
+          {buttonLabel}
+        </button>
       </div>
 
       <div style={showWhenVisible}>

@@ -36,7 +36,9 @@ const LoginForm = ({
         </div>
         <br />
 
-        <button type="submit">Login</button>
+        <button className="login-btn" type="submit">
+          Login
+        </button>
       </form>
     </>
   )

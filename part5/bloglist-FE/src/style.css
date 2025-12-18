@@ -38,3 +38,42 @@ img {
 b {
   text-transform: capitalize;
 }
+
+.blogitem-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.blog-item {
+  border: 1px solid black;
+  padding: 1rem;
+}
+
+button {
+  padding: 0.35em 0.65em;
+  text-transform: capitalize;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.delete-btn,
+.like-btn,
+.logout-btn,
+.login-btn,
+.create-btn {
+  background-color: #c0392b;
+  color: #fff;
+  border: none;
+}
+
+.like-btn,
+.login-btn,
+.create-btn {
+  background-color: #2196f3;
+  padding: 0.5em 0.75em;
+}
+
+.create-btn {
+  margin-bottom: 0.5rem;
+}
