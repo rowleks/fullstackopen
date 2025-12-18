@@ -53,6 +53,15 @@ export default defineConfig([
     },
   },
 
+  {
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest,
+      },
+    },
+  },
+
   // Global ignores
   {
     ignores: ['dist/**', 'node_modules/**'],
