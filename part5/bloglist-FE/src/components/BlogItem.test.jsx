@@ -1,90 +1,81 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import BlogItem from './BlogItem'
-import { vi } from 'vitest'
 
-test('renders blog title and author without url', () => {
-  const blog = {
-    title: 'Test Blog',
-    author: 'Test Author',
-    url: 'http://testurl.com',
-    likes: 0,
-    user: {
-      id: '123',
-      username: 'testuser',
-    },
-  }
+describe('BlogItem', () => {
+  let blog
+  let mockUpdateBlog
+  let user
 
-  render(
-    <BlogItem blog={blog} blogList={[]} setBlogs={() => {}} setMsg={() => {}} />
-  )
+  beforeEach(() => {
+    blog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testurl.com',
+      likes: 5,
+      user: {
+        id: '123',
+        username: 'testuser',
+      },
+    }
+    mockUpdateBlog = vi.fn()
+    user = userEvent.setup()
+  })
 
-  const titleElement = screen.getByText(/Test Blog/i)
-  const authorElement = screen.getByText(/Test Author/i)
-  const urlElement = screen.queryByText(/http:\/\/testurl.com/i)
+  test('renders blog title and author without url', () => {
+    render(
+      <BlogItem
+        blog={blog}
+        onLike={() => {}}
+        onDelete={() => {}}
+        user={blog.user}
+      />
+    )
+    const titleElement = screen.getByText(/Test Blog/i)
+    const authorElement = screen.getByText(/Test Author/i)
+    const urlElement = screen.queryByText(/http:\/\/testurl.com/i)
 
-  expect(titleElement).toBeInTheDocument()
-  expect(authorElement).toBeInTheDocument()
-  expect(urlElement).not.toBeInTheDocument()
-})
+    expect(titleElement).toBeInTheDocument()
+    expect(authorElement).toBeInTheDocument()
+    expect(urlElement).not.toBeInTheDocument()
+  })
 
-test('renders url and likes when view button is clicked', async () => {
-  const blog = {
-    title: 'Test Blog',
-    author: 'Test Author',
-    url: 'http://testurl.com',
-    likes: 5,
-    user: {
-      id: '123',
-      username: 'testuser',
-    },
-  }
+  test('renders url and likes when view button is clicked', async () => {
+    render(
+      <BlogItem
+        blog={blog}
+        onLike={() => {}}
+        onDelete={() => {}}
+        user={blog.user}
+      />
+    )
 
-  render(
-    <BlogItem blog={blog} blogList={[]} setBlogs={() => {}} setMsg={() => {}} />
-  )
+    const viewButton = screen.getByText('View')
+    await user.click(viewButton)
 
-  const user = userEvent.setup()
-  const viewButton = screen.getByText('View')
-  await user.click(viewButton)
+    const urlElement = screen.getByText(/http:\/\/testurl.com/i)
+    const likesElement = screen.getByText(/Likes: 5/i)
 
-  const urlElement = screen.getByText(/http:\/\/testurl.com/i)
-  const likesElement = screen.getByText(/Likes: 5/i)
+    expect(urlElement).toBeInTheDocument()
+    expect(likesElement).toBeInTheDocument()
+  })
 
-  expect(urlElement).toBeInTheDocument()
-  expect(likesElement).toBeInTheDocument()
-})
+  test('like button handler is called twice when clicked twice', async () => {
+    render(
+      <BlogItem
+        blog={blog}
+        onLike={mockUpdateBlog}
+        onDelete={() => {}}
+        user={blog.user}
+      />
+    )
 
-test('like button handler is called twice when clicked twice', async () => {
-  const blog = {
-    title: 'Test Blog',
-    author: 'Test Author',
-    url: 'http://testurl.com',
-    likes: 5,
-    user: {
-      id: '123',
-      username: 'testuser',
-    },
-  }
+    const viewButton = screen.getByText('View')
+    await user.click(viewButton)
+    const likeButton = screen.getByText('Like')
+    await user.click(likeButton)
+    await user.click(likeButton)
 
-  const mockUpdateBlog = vi.fn()
-
-  render(
-    <BlogItem
-      blog={blog}
-      blogList={[]}
-      setBlogs={() => {}}
-      setMsg={() => {}}
-      handleLikeCountUpdate={mockUpdateBlog}
-    />
-  )
-
-  const user = userEvent.setup()
-  const viewButton = screen.getByText('View')
-  await user.click(viewButton)
-  const likeButton = screen.getByText('Like')
-  await user.click(likeButton)
-  await user.click(likeButton)
-
-  expect(mockUpdateBlog).toHaveBeenCalledTimes(2)
+    expect(mockUpdateBlog).toHaveBeenCalledTimes(2)
+  })
 })
