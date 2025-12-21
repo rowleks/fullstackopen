@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
 import loginService from './services/loginService'
 import BlogSection from './components/BlogSection'
-import Notification from './components/Notification'
 import { getLoggedUser } from './utils/getLoggedUser'
+import Toggleable from './components/Toggleable'
+import Notification from './components/Notification'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -49,22 +50,18 @@ const App = () => {
     }
   }, [error])
 
-  if (!user) {
-    return (
-      <div>
-        <h1>Log in to the application</h1>
-        {!error && (
-          <p className="info">Please login to view your saved blogs</p>
-        )}
-        <Notification errorMsg={error} />
-        <LoginForm {...loginFormProps} />
-      </div>
-    )
-  }
-
   return (
     <>
-      <BlogSection onLogout={handleLogout} />
+      <h1>BlogList</h1>
+
+      <section>
+        {!user && (
+          <Toggleable buttonLabel="Login">
+            <LoginForm {...loginFormProps} error={error} />
+          </Toggleable>
+        )}
+      </section>
+      {user && <BlogSection onLogout={handleLogout} />}
     </>
   )
 }

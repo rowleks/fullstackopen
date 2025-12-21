@@ -1,12 +1,22 @@
+import Notification from './Notification'
+
 const LoginForm = ({
   username,
   password,
   onLogin,
   setUsername,
   setPassword,
+  error,
 }) => {
   return (
     <>
+      <div>
+        <h1>Log in to the application</h1>
+        <Notification errorMsg={error} />
+        {!error && (
+          <p className="info">Please login to view your saved blogs</p>
+        )}
+      </div>
       <form onSubmit={onLogin}>
         <div>
           <label>
