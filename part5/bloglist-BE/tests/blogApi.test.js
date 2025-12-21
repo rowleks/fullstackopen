@@ -168,17 +168,42 @@ describe('when db is seeded with data', () => {
     test('fails with status code 401 if token is invalid', async () => {
       const blogsAtStart = await apiHelpers.getBlogsInDb()
 
-      console.log(blogsAtStart)
-
       await api.delete(`/api/blogs/${blogsAtStart[0].id}`).expect(401)
     })
   })
 
   describe('PUT /api/blogs/:id', () => {
-    test('succeeds with status code 200 if id is valid and updates blog', async () => {
-      const blogsAtStart = await apiHelpers.getBlogsInDb()
-      const blogToUpdate = blogsAtStart[0]
+    let jwtToken
+    let blogToUpdate
 
+    beforeEach(async () => {
+      const user = {
+        username: 'ephemeral',
+        name: 'Ephemeral User',
+        password: 'password',
+      }
+      await api.post('/api/users').send(user)
+
+      const loginResult = await api
+        .post('/api/login')
+        .send({ username: user.username, password: user.password })
+      jwtToken = loginResult.body.token
+
+      const newBlog = {
+        title: 'A blog to be updated',
+        author: 'Ephemeral User',
+        url: 'https://example.com/ephemeral',
+      }
+
+      const response = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send(newBlog)
+
+      blogToUpdate = response.body
+    })
+
+    test('succeeds with status code 200 if id is valid and updates blog', async () => {
       const { title, author, url } = blogToUpdate
 
       const updatePayload = {
@@ -190,6 +215,7 @@ describe('when db is seeded with data', () => {
 
       const response = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
         .send(updatePayload)
         .expect(200)
         .expect('Content-Type', /application\/json/)
@@ -217,7 +243,11 @@ describe('when db is seeded with data', () => {
         likes: 100,
       }
 
-      await api.put(`/api/blogs/${invalidId}`).send(updatedBlogData).expect(400)
+      await api
+        .put(`/api/blogs/${invalidId}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send(updatedBlogData)
+        .expect(400)
     })
 
     test('fails with status code 404 if id does not exist', async () => {
@@ -229,7 +259,11 @@ describe('when db is seeded with data', () => {
         likes: 100,
       }
 
-      await api.put(`/api/blogs/${phantomId}`).send(updatedBlogData).expect(404)
+      await api
+        .put(`/api/blogs/${phantomId}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send(updatedBlogData)
+        .expect(404)
     })
   })
 })
@@ -241,5 +275,6 @@ describe('Unknown endpoint', () => {
 })
 
 after(async () => {
+  await clearDbData()
   await closeDbConnection()
 })
