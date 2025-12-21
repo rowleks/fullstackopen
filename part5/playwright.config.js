@@ -19,11 +19,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   use: {
-    // baseURL: 'http://localhost:3000',
-    trace: "on-first-retry",
+    baseURL: "http://localhost:5173",
+    // trace: "on-first-retry",
   },
 
   // Configure projects for major browsers
@@ -67,9 +66,19 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  /* webServer: [
+    {
+      command: "pnpm run start:test",
+      url: "http://localhost:3030",
+      reuseExistingServer: !process.env.CI,
+      cwd: "./bloglist-BE",
+      env: { NODE_ENV: "test", PORT: "3030" },
+    },
+    {
+      command: "pnpm run dev",
+      url: "http://localhost:5173",
+      reuseExistingServer: !process.env.CI,
+      cwd: "./bloglist-FE",
+    },
+  ], */
 });

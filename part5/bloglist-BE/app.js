@@ -18,6 +18,13 @@ app.use('/api/blogs', blogRoute)
 app.use('/api/users', userRoute)
 app.use('/api/login', loginRoute)
 
+if (process.env.NODE_ENV === 'test') {
+  app.post('/api/reset', async (_, res) => {
+    await db.clear()
+    res.status(204).end()
+  })
+}
+
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
