@@ -164,8 +164,9 @@ describe('Blog app', () => {
 
         const blog2 = page
           .locator('div')
-          .filter({ hasText: /^Testing2/ })
-          .first()
+          .filter({ hasText: 'Testing2' })
+          .filter({ has: page.getByRole('button', { name: 'Like' }) })
+          .last()
         let likeResponse = page.waitForResponse(
           res =>
             res.url().includes('/api/blogs/') &&
@@ -185,8 +186,9 @@ describe('Blog app', () => {
 
         const blog3 = page
           .locator('div')
-          .filter({ hasText: /^Testing3/ })
-          .first()
+          .filter({ hasText: 'Testing3' })
+          .filter({ has: page.getByRole('button', { name: 'Like' }) })
+          .last()
         likeResponse = page.waitForResponse(
           res =>
             res.url().includes('/api/blogs/') &&
@@ -197,9 +199,8 @@ describe('Blog app', () => {
         await expect(blog3.getByText('Likes: 1')).toBeVisible()
 
         const blogContainers = page
-          .locator('div')
-          .filter({ hasText: /Testing\d/i })
-          .filter({ hasText: /Rowland Momoh/i })
+          .getByRole('button', { name: /View|Hide/ })
+          .locator('..')
         const allBlogsText = await blogContainers.allInnerTexts()
         expect(allBlogsText[0]).toContain('Testing2')
         expect(allBlogsText[1]).toContain('Testing3')
