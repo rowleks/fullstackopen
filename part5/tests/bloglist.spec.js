@@ -1,14 +1,13 @@
-const { test, expect, beforeEach, describe } = require('@playwright/test')
+import { test, expect, beforeEach, describe } from '@playwright/test'
+import { loginWith, createBlog, createUser } from './helper'
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await request.post('/api/reset')
-    await request.post('/api/users', {
-      data: {
-        name: 'Rowland Momoh',
-        username: 'Rolex',
-        password: 'Rolex10',
-      },
+    await createUser(request, {
+      name: 'Rowland Momoh',
+      username: 'Rolex',
+      password: 'Rolex10',
     })
     await page.goto('/')
   })
@@ -20,10 +19,7 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.getByRole('button', { name: 'Login' }).click()
-      await page.getByLabel('Username:').fill('Rolex')
-      await page.getByLabel('Password:').fill('Rolex10')
-      await page.getByRole('button', { name: 'Login' }).click()
+      await loginWith(page, { username: 'Rolex', password: 'Rolex10' })
       await expect(page.getByText(/welcome rolex/i)).toBeVisible()
     })
 
@@ -43,40 +39,24 @@ describe('Blog app', () => {
 
   describe('when logged in', () => {
     beforeEach(async ({ page }) => {
-      await page.getByRole('button', { name: 'Login' }).click()
-      await page.getByLabel('Username:').fill('Rolex')
-      await page.getByLabel('Password:').fill('Rolex10')
-      await page.getByRole('button', { name: 'Login' }).click()
+      await loginWith(page, { username: 'Rolex', password: 'Rolex10' })
     })
 
     test('a new blog can be created', async ({ page }) => {
-      await page.getByRole('button', { name: 'Create New Blog' }).click()
-      await page.getByLabel('title:').fill('Testing With Playwright')
-      await page.getByLabel('author:').fill('Rowland Momoh')
-      await page.getByLabel('url').fill('https://test.com')
-      const createResponse = page.waitForResponse(
-        res =>
-          res.url().includes('/api/blogs') && res.request().method() === 'POST'
-      )
-      await page.getByRole('button', { name: 'Create' }).click()
-      await createResponse
-      await expect(page.getByText(/Testing With Playwright/i)).toBeVisible()
+      await createBlog(page, {
+        title: 'Testing With Playwright',
+        author: 'Rowland Momoh',
+        url: 'https://test.com',
+      })
     })
 
     describe('when one blog is created', () => {
       beforeEach(async ({ page }) => {
-        await page.getByRole('button', { name: 'Create New Blog' }).click()
-        await page.getByLabel('title:').fill('Testing With Playwright')
-        await page.getByLabel('author:').fill('Rowland Momoh')
-        await page.getByLabel('url').fill('https://test.com')
-        const createResponse = page.waitForResponse(
-          res =>
-            res.url().includes('/api/blogs') &&
-            res.request().method() === 'POST'
-        )
-        await page.getByRole('button', { name: 'Create' }).click()
-        await createResponse
-        await expect(page.getByText(/Testing With Playwright/i)).toBeVisible()
+        await createBlog(page, {
+          title: 'Testing With Playwright',
+          author: 'Rowland Momoh',
+          url: 'https://test.com',
+        })
         await page.getByRole('button', { name: 'View' }).click()
       })
 
@@ -111,18 +91,13 @@ describe('Blog app', () => {
       }) => {
         const newContext = await browser.newContext()
         const newPage = await newContext.newPage()
-        await request.post('/api/users', {
-          data: {
-            name: 'Jane Doe',
-            username: 'janedoe',
-            password: 'JaneDoe10',
-          },
+        await createUser(request, {
+          name: 'Jane Doe',
+          username: 'janedoe',
+          password: 'JaneDoe10',
         })
         await newPage.goto('/')
-        await newPage.getByRole('button', { name: 'Login' }).click()
-        await newPage.getByLabel('Username:').fill('janedoe')
-        await newPage.getByLabel('Password:').fill('JaneDoe10')
-        await newPage.getByRole('button', { name: 'Login' }).click()
+        await loginWith(newPage, { username: 'janedoe', password: 'JaneDoe10' })
         await newPage.getByRole('button', { name: 'View' }).click()
         await expect(
           newPage.getByRole('button', { name: 'Remove' })
@@ -141,18 +116,11 @@ describe('Blog app', () => {
         ]
 
         for (const blog of blogs) {
-          await page.getByRole('button', { name: 'Create New Blog' }).click()
-          await page.getByLabel('title:').fill(blog.title)
-          await page.getByLabel('author:').fill('Rowland Momoh')
-          await page.getByLabel('url').fill(blog.url)
-          const createResponse = page.waitForResponse(
-            res =>
-              res.url().includes('/api/blogs') &&
-              res.request().method() === 'POST'
-          )
-          await page.getByRole('button', { name: 'Create' }).click()
-          await createResponse
-          await expect(page.getByText(blog.title)).toBeVisible()
+          await createBlog(page, {
+            title: blog.title,
+            author: 'Rowland Momoh',
+            url: blog.url,
+          })
         }
       })
 
