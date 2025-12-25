@@ -1,0 +1,14 @@
+GET http://localhost:3001/anecdotes
+
+###
+
+PUT http://localhost:3001/anecdotes/514d
+Content-Type: application/json
+
+{
+    "content": "Talk is cheap, show me the code!",
+    "votes": 7
+}
+
+### 
+DELETE  http://localhost:3001/anecdotes/93a9

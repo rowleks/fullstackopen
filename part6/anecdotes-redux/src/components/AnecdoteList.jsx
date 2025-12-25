@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { setAnecdotes, voteAnecdote } from '../reducers/anecdoteReducer'
-import { setVoteNotif } from '../reducers/notificationReducer'
+import { initializeAnecdotes, voteAnecdote } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationReducer'
 import { useEffect } from 'react'
-import anecdotesService from '../services/anecdotesService'
 
 const Anecdote = ({ anecdote, handleVote }) => {
   return (
@@ -10,7 +9,8 @@ const Anecdote = ({ anecdote, handleVote }) => {
       <p>{anecdote.content}</p>
       <div>
         <span>
-          has {anecdote.votes} {anecdote.votes !== 1 ? 'votes ' : 'vote '}
+          has <b>{anecdote.votes}</b>{' '}
+          {anecdote.votes !== 1 ? 'votes ' : 'vote '}
         </span>
         <button onClick={handleVote}>Vote</button>
       </div>
@@ -32,15 +32,11 @@ const AnecdoteList = () => {
 
   const onVote = anecdote => {
     dispatch(voteAnecdote(anecdote.id))
-    dispatch(setVoteNotif(anecdote.content))
+    dispatch(setNotification(`You voted '${anecdote.content}'`, 5))
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      const anecdotes = await anecdotesService.getAll()
-      dispatch(setAnecdotes(anecdotes))
-    }
-    fetchData()
+    dispatch(initializeAnecdotes())
   }, [dispatch])
 
   return (
