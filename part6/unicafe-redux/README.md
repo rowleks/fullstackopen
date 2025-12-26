@@ -48,6 +48,27 @@ unicafe-redux/
 └── README.md
 ```
 
+## Redux Implementation
+
+### State Structure
+The application state is a simple object containing feedback counters:
+```javascript
+{
+  good: 0,
+  ok: 0,
+  bad: 0
+}
+```
+
+### Actions
+- **GOOD**: Increment good feedback counter
+- **OK**: Increment ok feedback counter
+- **BAD**: Increment bad feedback counter
+- **RESET**: Reset all counters to zero
+
+### Reducer
+A pure function that handles state updates immutably based on action types.
+
 ## Testing
 
 Run the test suite to verify reducer functionality:
