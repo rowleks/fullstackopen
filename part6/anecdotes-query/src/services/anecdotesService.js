@@ -21,7 +21,8 @@ const create = async content => {
 
   const res = await fetch(BASE_URL, options)
   if (!res.ok) {
-    throw new Error('Failed to create anecdote')
+    const errorData = await res.json()
+    throw new Error(errorData.error)
   }
 
   return await res.json()
@@ -38,7 +39,8 @@ const update = async newObject => {
 
   const res = await fetch(`${BASE_URL}/${newObject.id}`, options)
   if (!res.ok) {
-    throw new Error('Failed to update anecdote')
+    const errorData = await res.json()
+    throw new Error(errorData.error)
   }
 
   return await res.json()
