@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useField } from '../hooks'
 
 const CreateNew = props => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('content')
+  const author = useField('author')
+  const info = useField('info')
   const navigate = useNavigate()
 
   const handleSubmit = e => {
@@ -19,35 +19,32 @@ const CreateNew = props => {
     navigate('/')
   }
 
+  const handleReset = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name="content"
-            value={content}
-            onChange={e => setContent(e.target.value)}
-          />
+          <input {...content.inputProps} />
         </div>
         <div>
           author
-          <input
-            name="author"
-            value={author}
-            onChange={e => setAuthor(e.target.value)}
-          />
+          <input {...author.inputProps} />
         </div>
         <div>
           url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={e => setInfo(e.target.value)}
-          />
+          <input {...info.inputProps} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
+        <button type="reset" onClick={handleReset}>
+          reset
+        </button>
       </form>
     </div>
   )
