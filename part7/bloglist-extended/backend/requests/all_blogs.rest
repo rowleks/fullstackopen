@@ -1,0 +1,13 @@
+GET http://localhost:3030/api/blogs
+
+###
+POST http://localhost:3030/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvbGV4IiwiaWQiOiI2OTNlY2ExZWFkYTRiZDJhNzMzZmY3ODYiLCJpYXQiOjE3NjU3NjE4MjAsImV4cCI6MTc2NTc2NTQyMH0.XJ3cxdmJFkyob0k-Nc15PXfvZcYWdRyg99CLODA-Q64
+
+{
+    "title": "The Future of AI in Healthcare - Part 2",
+    "author": "Dr. Anya Sharma",
+    "url": "https://aihealthinsights.com/future-ai-healthcare-part2",
+    "likes": 20
+}

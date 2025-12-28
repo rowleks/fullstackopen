@@ -1,0 +1,7 @@
+POST http://localhost:3030/api/login
+Content-Type: application/json
+
+{
+    "username": "rolex",
+    "password": "Rolex100"
+}
