@@ -1,19 +1,35 @@
 import Notification from './Notification'
+import { useField, useLoginResource } from '../hooks'
+import { useNotification } from '../context/NotificationContext'
 
-const LoginForm = ({
-  username,
-  password,
-  onLogin,
-  setUsername,
-  setPassword,
-  error,
-}) => {
+const LoginForm = () => {
+  const username = useField('text')
+  const password = useField('password')
+  const { login } = useLoginResource()
+  const { notification } = useNotification()
+
+  const onLogin = e => {
+    e.preventDefault()
+
+    const credentials = {
+      username: username.inputProps.value,
+      password: password.inputProps.value,
+    }
+
+    login(credentials, {
+      onSuccess: () => {
+        username.reset()
+        password.reset()
+      },
+    })
+  }
+
   return (
     <>
       <div>
         <h1>Log in to the application</h1>
-        <Notification errorMsg={error} />
-        {!error && (
+        <Notification />
+        {!notification.message && (
           <p className="info">Please login to view your saved blogs</p>
         )}
       </div>
@@ -21,13 +37,7 @@ const LoginForm = ({
         <div>
           <label>
             <span>Username: </span>
-            <input
-              type="text"
-              name="username"
-              id="username"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-            />
+            <input {...username.inputProps} />
           </label>
         </div>
         <br />
@@ -35,13 +45,7 @@ const LoginForm = ({
         <div>
           <label>
             <span>Password: </span>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+            <input {...password.inputProps} />
           </label>
         </div>
         <br />

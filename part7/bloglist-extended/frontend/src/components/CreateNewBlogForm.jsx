@@ -1,4 +1,20 @@
-const CreateNewBlogForm = ({ handleSubmit, setFormInput, formInput }) => {
+import { useState } from 'react'
+import { useBlogResource } from '../hooks'
+
+const CreateNewBlogForm = ({ onBlogCreated }) => {
+  const [formInput, setFormInput] = useState({ title: '', author: '', url: '' })
+  const [_, service] = useBlogResource()
+
+  const handleSubmit = event => {
+    event.preventDefault()
+    onBlogCreated && onBlogCreated()
+    service.create(formInput, {
+      onSuccess: () => {
+        setFormInput({ title: '', author: '', url: '' })
+      },
+    })
+  }
+
   return (
     <div>
       <h3>Create New Blog</h3>

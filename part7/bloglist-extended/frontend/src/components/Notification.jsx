@@ -1,8 +1,19 @@
-const Notification = ({ successMsg, errorMsg }) => {
-  if (!successMsg && !errorMsg) return null
+import { useNotification } from '../context/NotificationContext'
+
+const Notification = () => {
+  const { notification } = useNotification()
+
+  const getClassName = () => {
+    if (notification.type === 'success') return 'success'
+    if (notification.type === 'error') return 'error'
+    return null
+  }
+
+  if (!notification.message) return null
+
   return (
-    <div className={successMsg ? 'success' : 'error'}>
-      <p>{successMsg || errorMsg}</p>
+    <div className={getClassName()}>
+      <p>{notification.message}</p>
     </div>
   )
 }

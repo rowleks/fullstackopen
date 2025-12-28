@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
-import blogService from '../services/blogService'
 import Notification from './Notification'
-import { getLoggedUser } from '../utils/getLoggedUser'
 import CreateBlogSection from './CreateBlogSection'
 import BlogItem from './BlogItem'
+import { useBlogResource } from '../hooks'
+import { useUser } from '../context/UserContext'
 
 const BlogList = ({ blogs, onLike, onDelete, user }) => {
   return (
@@ -24,69 +23,25 @@ const BlogList = ({ blogs, onLike, onDelete, user }) => {
   )
 }
 
-const BlogSection = ({ onLogout }) => {
-  const [blogs, setBlogs] = useState([])
-  const [msg, setMsg] = useState({ error: '', success: '' })
-  const [loading, setLoading] = useState(false)
-
-  const loggedUser = getLoggedUser()
+const BlogSection = () => {
+  const [resources, service] = useBlogResource()
+  const { user: loggedUser, dispatch } = useUser()
   const username = loggedUser ? loggedUser.user.username : ''
+  const blogs = resources.data || []
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        setLoading(true)
-        setMsg({ error: '', success: '' })
-        const data = await blogService.getAllBlogs()
-        setBlogs(data)
-      } catch (error) {
-        console.error('Error fetching blogs:', error)
-        setMsg({ error: 'Error fetching blogs', success: '' })
-      } finally {
-        setLoading(false)
-      }
-    }
+  console.log(loggedUser)
 
-    fetchBlogs()
-  }, [])
-
-  useEffect(() => {
-    if (msg.success || msg.error) {
-      const timeoutId = setTimeout(() => {
-        setMsg({ error: '', success: '' })
-      }, 5000)
-
-      return () => clearTimeout(timeoutId)
-    }
-  }, [msg.error, msg.success])
-
-  const handleLike = async blog => {
-    try {
-      blogService.setToken(loggedUser.token)
-      const updateBlogPayload = { ...blog, likes: blog.likes + 1 }
-      const result = await blogService.updateBlog(updateBlogPayload)
-      const updatedBlogList = blogs.map(b => (b.id === result.id ? result : b))
-      setBlogs(updatedBlogList)
-    } catch (error) {
-      console.error(error)
-    }
+  const handleLike = blog => {
+    const updateBlogPayload = { ...blog, likes: blog.likes + 1 }
+    service.update(updateBlogPayload)
   }
 
-  const handleDelete = async blog => {
+  const handleDelete = blog => {
     const confirmDelete = window.confirm(
       `Remove blog ${blog.title} by ${blog.author}?`
     )
     if (confirmDelete) {
-      try {
-        blogService.setToken(loggedUser.token)
-        await blogService.deleteBlog(blog.id)
-        const updatedBlogList = blogs.filter(b => b.id !== blog.id)
-        setBlogs(updatedBlogList)
-      } catch (error) {
-        console.error(error)
-        const serverErrorMsg = error.response.data.error
-        setMsg({ error: serverErrorMsg, success: '' })
-      }
+      service.remove(blog.id, loggedUser.token)
     }
   }
 
@@ -95,20 +50,23 @@ const BlogSection = ({ onLogout }) => {
       <h2>Blogs</h2>
       <p>
         Welcome <b>{username} </b>
-        <button className="logout-btn" onClick={onLogout}>
+        <button
+          className="logout-btn"
+          onClick={() => dispatch({ type: 'LOGOUT' })}
+        >
           Logout
         </button>
       </p>
 
       <div>
-        <Notification successMsg={msg.success} errorMsg={msg.error} />
+        <Notification />
       </div>
       <section>
-        <CreateBlogSection setMsg={setMsg} setBlogs={setBlogs} blogs={blogs} />
+        <CreateBlogSection />
       </section>
       <section>
         <h3>Your Saved Blogs</h3>
-        {loading && <p>Loading blogs...</p>}
+        {resources.isPending && <p>Loading blogs...</p>}
         <BlogList
           blogs={blogs}
           onLike={handleLike}
