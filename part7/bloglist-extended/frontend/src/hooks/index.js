@@ -4,6 +4,7 @@ import loginService from '../services/loginService'
 import { useState } from 'react'
 import { useUser } from '../context/UserContext'
 import { useNotification } from '../context/NotificationContext'
+import userService from '../services/userService'
 
 export const useBlogResource = () => {
   const queryClient = useQueryClient()
@@ -118,6 +119,15 @@ export const useLoginResource = () => {
   const login = (credentials, options) => mutation.mutate(credentials, options)
 
   return { login }
+}
+
+export const useUserResources = () => {
+  const users = useQuery({
+    queryKey: ['users'],
+    queryFn: userService.getAllUsers,
+  })
+
+  return users
 }
 
 export const useField = type => {

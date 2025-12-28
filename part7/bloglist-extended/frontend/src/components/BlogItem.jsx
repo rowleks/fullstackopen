@@ -8,20 +8,20 @@ const BlogItem = ({ blog, onLike, onDelete, user }) => {
   }
   return (
     <>
-      <div className="blog-item">
-        <div>
+      <div className="blog-item space-y-2">
+        <div className="">
           <span>{blog.title} </span>
           <em>{blog.author} </em>
-          <button onClick={handleExpansion}>
+          <button onClick={handleExpansion} className="underline">
             {!expanded ? 'View' : 'Hide'}
           </button>
         </div>
         {expanded && (
-          <div>
+          <div className="space-y-3">
             <a href={blog.url} target="_blank" rel="noreferrer">
               {blog.url}
             </a>
-            <p>
+            <p className="my-4">
               Likes: {blog.likes}{' '}
               <button className="like-btn" onClick={onLike}>
                 Like

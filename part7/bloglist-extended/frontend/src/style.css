@@ -1,3 +1,36 @@
+@import 'tailwindcss';
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-800 font-sans;
+  }
+
+  a {
+    @apply text-blue-600 hover:text-blue-800;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold;
+  }
+
+  button {
+    @apply rounded;
+  }
+
+  input {
+    @apply outline-1 px-1 py-0.5;
+  }
+
+  form {
+    @apply space-y-2;
+  }
+}
+
 .success,
 .error,
 .info {

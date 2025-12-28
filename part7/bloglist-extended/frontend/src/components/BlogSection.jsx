@@ -6,7 +6,7 @@ import { useUser } from '../context/UserContext'
 
 const BlogList = ({ blogs, onLike, onDelete, user }) => {
   return (
-    <div className="blogitem-wrapper">
+    <div className="blogitem-wrapper space-y-3">
       {blogs
         .slice()
         .sort((a, b) => b.likes - a.likes)
@@ -29,8 +29,6 @@ const BlogSection = () => {
   const username = loggedUser ? loggedUser.user.username : ''
   const blogs = resources.data || []
 
-  console.log(loggedUser)
-
   const handleLike = blog => {
     const updateBlogPayload = { ...blog, likes: blog.likes + 1 }
     service.update(updateBlogPayload)
@@ -46,7 +44,7 @@ const BlogSection = () => {
   }
 
   return (
-    <div>
+    <div className="space-y-3">
       <h2>Blogs</h2>
       <p>
         Welcome <b>{username} </b>
@@ -64,7 +62,7 @@ const BlogSection = () => {
       <section>
         <CreateBlogSection />
       </section>
-      <section>
+      <section className="space-y-4">
         <h3>Your Saved Blogs</h3>
         {resources.isPending && <p>Loading blogs...</p>}
         <BlogList

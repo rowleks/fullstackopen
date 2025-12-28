@@ -1,12 +1,14 @@
 import Notification from './Notification'
 import { useField, useLoginResource } from '../hooks'
 import { useNotification } from '../context/NotificationContext'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
   const username = useField('text')
   const password = useField('password')
   const { login } = useLoginResource()
   const { notification } = useNotification()
+  const navigate = useNavigate()
 
   const onLogin = e => {
     e.preventDefault()
@@ -20,13 +22,14 @@ const LoginForm = () => {
       onSuccess: () => {
         username.reset()
         password.reset()
+        navigate('/blogs')
       },
     })
   }
 
   return (
     <>
-      <div>
+      <div className="space-y-4">
         <h1>Log in to the application</h1>
         <Notification />
         {!notification.message && (
