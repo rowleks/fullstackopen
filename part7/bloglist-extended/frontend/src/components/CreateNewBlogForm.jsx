@@ -16,7 +16,7 @@ const CreateNewBlogForm = ({ onBlogCreated }) => {
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       <h3>Create New Blog</h3>
 
       <form onSubmit={handleSubmit}>

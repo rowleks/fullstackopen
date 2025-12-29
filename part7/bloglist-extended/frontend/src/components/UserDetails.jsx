@@ -4,7 +4,7 @@ const UserDetails = ({ user }) => {
     <>
       <div className="space-y-4">
         <h3>{user.name}</h3>
-        <h4>Added blogs</h4>
+        <h5 className="text-gray-500">Added blogs</h5>
         {user.blogs.length < 1 && <p>No blogs added yet</p>}
         <ul className="space-y-2">
           {user.blogs.map(blog => (
