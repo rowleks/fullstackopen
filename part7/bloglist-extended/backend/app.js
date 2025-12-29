@@ -2,6 +2,7 @@ const express = require('express')
 const blogRoute = require('./controllers/blogController')
 const userRoute = require('./controllers/userController')
 const loginRoute = require('./controllers/loginController')
+const commentRoute = require('./controllers/CommentController')
 const middleware = require('./utils/middleware')
 const db = require('./database')
 
@@ -14,7 +15,7 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
 
-app.use('/api/blogs', blogRoute)
+app.use('/api/blogs', blogRoute, commentRoute)
 app.use('/api/users', userRoute)
 app.use('/api/login', loginRoute)
 
