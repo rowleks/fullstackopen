@@ -8,13 +8,11 @@ router.get('/', async (_, res) => {
     .populate('user', { username: 1, name: 1 })
     .populate({
       path: 'comments',
-      select: { comment: 1, user: 1 },
       populate: {
         path: 'user',
-        select: { username: 1, name: 1 },
+        select: 'username name',
       },
     })
-
   res.json(blogs)
 })
 
