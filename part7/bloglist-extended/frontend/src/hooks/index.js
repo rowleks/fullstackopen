@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useUser } from '../context/UserContext'
 import { useNotification } from '../context/NotificationContext'
 import userService from '../services/userService'
+import commentService from '../services/commentService'
 
 export const useBlogResource = () => {
   const queryClient = useQueryClient()
@@ -128,6 +129,39 @@ export const useUserResources = () => {
   })
 
   return users
+}
+
+export const useCommentResources = id => {
+  const queryClient = useQueryClient()
+  const { dispatch } = useNotification()
+  const { user: loggedUser } = useUser()
+
+  const notify = (message, type = 'success') => {
+    dispatch({ type: 'SET_NOTIFICATION', payload: { message, type } })
+    setTimeout(() => {
+      dispatch({ type: 'CLEAR_NOTIFICATION' })
+    }, 5000)
+  }
+
+  const createMutation = useMutation({
+    mutationFn: newComment => commentService.create(newComment, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['blogs'])
+      notify(`Comment added successfully`)
+    },
+    onError: error => {
+      notify(error.response?.data?.error || 'Error adding comment', 'error')
+    },
+  })
+
+  const create = comment => {
+    commentService.setToken(loggedUser.token)
+    createMutation.mutate(comment)
+  }
+
+  return {
+    create,
+  }
 }
 
 export const useField = type => {

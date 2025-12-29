@@ -1,4 +1,3 @@
-import Notification from './Notification'
 import CreateBlogSection from './CreateBlogSection'
 import BlogItem from './BlogItem'
 import { useBlogResource } from '../hooks'
@@ -22,9 +21,6 @@ const BlogSection = () => {
 
   return (
     <div className="space-y-3">
-      <div>
-        <Notification />
-      </div>
       <section>
         <CreateBlogSection />
       </section>

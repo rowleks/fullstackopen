@@ -16,6 +16,7 @@ import { useUser } from './context/UserContext'
 import { useBlogResource, useUserResources } from './hooks'
 import BlogDetails from './components/BlogDetails'
 import { useEffect } from 'react'
+import Notification from './components/Notification'
 
 const HomePage = ({ user }) => {
   const navigate = useNavigate()
@@ -88,7 +89,7 @@ const App = () => {
       <Nav loggedUser={loggedUser} dispatch={dispatch} />
 
       <h1>BlogList</h1>
-      <h1> </h1>
+      <Notification />
       <div className="px-3">
         <Routes>
           <Route path="/" element={<HomePage user={loggedUser} />} />

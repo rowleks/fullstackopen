@@ -1,4 +1,3 @@
-import Notification from './Notification'
 import { useField, useLoginResource } from '../hooks'
 import { useNotification } from '../context/NotificationContext'
 import { useNavigate } from 'react-router-dom'
@@ -31,7 +30,6 @@ const LoginForm = () => {
     <>
       <div className="space-y-4">
         <h1>Log in to the application</h1>
-        <Notification />
         {!notification.message && (
           <p className="info">Please login to view your saved blogs</p>
         )}
