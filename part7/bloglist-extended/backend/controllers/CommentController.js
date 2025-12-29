@@ -34,12 +34,4 @@ router.post('/:id/comments', userExtractor, async (req, res) => {
   res.status(201).json(savedComment)
 })
 
-router.get('/:id/comments', async (req, res) => {
-  const comments = await Comment.find({ blog: req.params.id }).populate(
-    'user',
-    { username: 1, name: 1 }
-  )
-  res.json(comments)
-})
-
 module.exports = router

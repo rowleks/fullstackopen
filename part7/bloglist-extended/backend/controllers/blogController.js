@@ -6,7 +6,15 @@ const { userExtractor } = require('../utils/middleware')
 router.get('/', async (_, res) => {
   const blogs = await Blog.find({})
     .populate('user', { username: 1, name: 1 })
-    .populate('comments', {})
+    .populate({
+      path: 'comments',
+      select: { comment: 1, user: 1 },
+      populate: {
+        path: 'user',
+        select: { username: 1, name: 1 },
+      },
+    })
+
   res.json(blogs)
 })
 
