@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const UserDetails = ({ user }) => {
   if (!user) return null
   return (
@@ -9,7 +11,7 @@ const UserDetails = ({ user }) => {
         <ul className="space-y-2">
           {user.blogs.map(blog => (
             <li key={blog.id}>
-              <a href={`/blogs/${blog.id}`}>{blog.title}</a>
+              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
             </li>
           ))}
         </ul>

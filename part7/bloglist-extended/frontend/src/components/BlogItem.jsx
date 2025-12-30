@@ -1,8 +1,10 @@
+import { Link } from 'react-router-dom'
+
 const BlogItem = ({ blog }) => {
   return (
     <>
       <div className="blog-item space-y-2">
-        <a href={`/blogs/${blog.id}`}>{blog.title} </a>
+        <Link to={`/blogs/${blog.id}`}>{blog.title} </Link>
       </div>
     </>
   )

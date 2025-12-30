@@ -1,6 +1,7 @@
 import { useUser } from '../context/UserContext'
 import { useBlogResource } from '../hooks'
 import CommentSection from './CommentSection'
+import { useNavigate } from 'react-router-dom'
 
 const BlogInfo = ({ blog, handleLike, handleDelete, loggedUser }) => {
   return (
@@ -32,6 +33,7 @@ const BlogInfo = ({ blog, handleLike, handleDelete, loggedUser }) => {
 const BlogDetails = ({ blog }) => {
   const { user: loggedUser } = useUser()
   const [blogs, service] = useBlogResource()
+  const navigate = useNavigate()
 
   if (!blog) return null
   const handleLike = blog => {
@@ -44,7 +46,9 @@ const BlogDetails = ({ blog }) => {
       `Remove blog ${blog.title} by ${blog.author}?`
     )
     if (confirmDelete) {
-      service.remove(blog.id)
+      service.remove(blog.id, {
+        onSuccess: () => navigate('/blogs'),
+      })
     }
   }
 

@@ -5,7 +5,6 @@ import {
   useMatch,
   Navigate,
   Outlet,
-  useNavigate,
 } from 'react-router-dom'
 import LoginForm from './components/LoginForm'
 import BlogSection from './components/BlogSection'
@@ -15,18 +14,13 @@ import Toggleable from './components/Toggleable'
 import { useUser } from './context/UserContext'
 import { useBlogResource, useUserResources } from './hooks'
 import BlogDetails from './components/BlogDetails'
-import { useEffect } from 'react'
 import Notification from './components/Notification'
 import RegisterForm from './components/RegisterForm'
 
 const HomePage = ({ user }) => {
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (user) {
-      navigate('/blogs')
-    }
-  })
+  if (user) {
+    return <Navigate to="/blogs" replace />
+  }
   return (
     <>
       <div>

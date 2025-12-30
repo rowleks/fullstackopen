@@ -5,6 +5,7 @@ const loginRoute = require('./controllers/loginController')
 const commentRoute = require('./controllers/CommentController')
 const middleware = require('./utils/middleware')
 const db = require('./database')
+const path = require('node:path')
 
 const app = express()
 
@@ -14,6 +15,11 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
+
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) return next()
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 app.use('/api/blogs', blogRoute, commentRoute)
 app.use('/api/users', userRoute)
