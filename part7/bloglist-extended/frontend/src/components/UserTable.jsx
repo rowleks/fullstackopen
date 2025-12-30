@@ -4,7 +4,7 @@ import { useUserResources } from '../hooks'
 const UserItem = ({ user }) => {
   return (
     <>
-      <tr className="table-row even:bg-gray-100">
+      <tr className="table-row even:bg-gray-100 odd:bg-neutral-200">
         <td className="table-cell p-2">
           <Link to={`/users/${user.id}`}>{user.name}</Link>
         </td>
@@ -15,7 +15,7 @@ const UserItem = ({ user }) => {
 }
 
 const UserTable = () => {
-  const users = useUserResources()
+  const { users } = useUserResources()
 
   if (!users) return null
 
@@ -28,7 +28,7 @@ const UserTable = () => {
             <th className="table-cell p-2">blogs created</th>
           </tr>
         </thead>
-        <tbody className="table-row-group even:bg-blue-200">
+        <tbody className="table-row-group">
           {users.data?.map(user => (
             <UserItem key={user.id} user={user} />
           ))}

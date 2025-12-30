@@ -17,6 +17,7 @@ import { useBlogResource, useUserResources } from './hooks'
 import BlogDetails from './components/BlogDetails'
 import { useEffect } from 'react'
 import Notification from './components/Notification'
+import RegisterForm from './components/RegisterForm'
 
 const HomePage = ({ user }) => {
   const navigate = useNavigate()
@@ -51,6 +52,7 @@ const Nav = ({ loggedUser, dispatch }) => {
           <Link className="p-2" to="/users">
             users
           </Link>
+          {!loggedUser && <Link to="/register">register</Link>}
         </nav>
         {loggedUser && (
           <div>
@@ -74,7 +76,7 @@ const ProtectedRoutes = ({ user }) => {
 
 const App = () => {
   const { user: loggedUser, dispatch } = useUser()
-  const users = useUserResources()
+  const { users } = useUserResources()
   const [blogs, _] = useBlogResource()
   const match = useMatch('/users/:id')
   const found = useMatch('/blogs/:id')
@@ -93,6 +95,8 @@ const App = () => {
       <div className="px-3">
         <Routes>
           <Route path="/" element={<HomePage user={loggedUser} />} />
+          <Route path="/register" element={<RegisterForm />} />
+
           <Route element={<ProtectedRoutes user={loggedUser} />}>
             <Route
               path="/users/:id"

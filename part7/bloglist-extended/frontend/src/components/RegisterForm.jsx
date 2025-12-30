@@ -1,27 +1,30 @@
-import { useField, useLoginResource } from '../hooks'
+import { useField, useUserResources } from '../hooks'
 import { useNotification } from '../context/NotificationContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const username = useField('text')
+  const name = useField('text')
   const password = useField('password')
-  const { login } = useLoginResource()
+  const { register } = useUserResources()
   const { notification } = useNotification()
   const navigate = useNavigate()
 
-  const onLogin = e => {
+  const onRegister = e => {
     e.preventDefault()
 
     const credentials = {
       username: username.inputProps.value,
+      name: name.inputProps.value,
       password: password.inputProps.value,
     }
 
-    login(credentials, {
+    register(credentials, {
       onSuccess: () => {
         username.reset()
+        name.reset()
         password.reset()
-        navigate('/blogs')
+        navigate('/')
       },
     })
   }
@@ -29,19 +32,24 @@ const LoginForm = () => {
   return (
     <>
       <div className="space-y-4">
-        <h1>Log in to the application</h1>
+        <h1>Register</h1>
         {!notification.message && (
-          <p className="info">
-            Please login or <Link to="/register">register</Link> to view your
-            saved blogs
-          </p>
+          <p className="info">Create a new account to use the application</p>
         )}
       </div>
-      <form onSubmit={onLogin}>
+      <form onSubmit={onRegister}>
         <div>
           <label>
             <span>Username: </span>
-            <input {...username.inputProps} />
+            <input {...username.inputProps} required />
+          </label>
+        </div>
+        <br />
+
+        <div>
+          <label>
+            <span>Name: </span>
+            <input {...name.inputProps} required />
           </label>
         </div>
         <br />
@@ -49,17 +57,17 @@ const LoginForm = () => {
         <div>
           <label>
             <span>Password: </span>
-            <input {...password.inputProps} />
+            <input {...password.inputProps} required />
           </label>
         </div>
         <br />
 
         <button className="login-btn" type="submit">
-          Login
+          Register
         </button>
       </form>
     </>
   )
 }
 
-export default LoginForm
+export default RegisterForm

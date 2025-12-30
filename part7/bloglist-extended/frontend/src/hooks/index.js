@@ -123,12 +123,36 @@ export const useLoginResource = () => {
 }
 
 export const useUserResources = () => {
+  const { dispatch } = useNotification()
+  const queryClient = useQueryClient()
+
   const users = useQuery({
     queryKey: ['users'],
     queryFn: userService.getAllUsers,
   })
 
-  return users
+  const notify = (message, type = 'success') => {
+    dispatch({ type: 'SET_NOTIFICATION', payload: { message, type } })
+    setTimeout(() => {
+      dispatch({ type: 'CLEAR_NOTIFICATION' })
+    }, 5000)
+  }
+
+  const createMutation = useMutation({
+    mutationFn: userService.registerUser,
+    onSuccess: newUser => {
+      queryClient.invalidateQueries(['users'])
+      notify(`User '${newUser.username}' registered successfully`)
+    },
+    onError: error => {
+      notify(error.response?.data?.error || 'Error registering user', 'error')
+    },
+  })
+
+  const register = (credentials, options) =>
+    createMutation.mutate(credentials, options)
+
+  return { users, register }
 }
 
 export const useCommentResources = id => {
