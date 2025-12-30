@@ -16,11 +16,6 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
 
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api')) return next()
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
-})
-
 app.use('/api/blogs', blogRoute, commentRoute)
 app.use('/api/users', userRoute)
 app.use('/api/login', loginRoute)
@@ -31,6 +26,10 @@ if (process.env.NODE_ENV === 'test') {
     res.status(204).end()
   })
 }
+
+app.get('/{*splat}', (_, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
