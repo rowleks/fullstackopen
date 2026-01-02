@@ -1,0 +1,19 @@
+{
+  "name": "small-library",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Rowland Momoh",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "@apollo/server": "^5.2.0",
+    "graphql": "^16.12.0"
+  }
+}
