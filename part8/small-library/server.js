@@ -1,6 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v4: uuid } = require('uuid')
+const { GraphQLError } = require('graphql')
 
 let authors = [
   {
@@ -145,6 +146,39 @@ const resolvers = {
 
   Mutation: {
     addBook: (_, args) => {
+      if (args.title.length < 3 || args.author.length < 3) {
+        throw new GraphQLError(
+          'Title and author must be longer than 3 characters',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.title.length < 3 ? 'title' : 'author',
+            },
+          }
+        )
+      }
+
+      if (
+        args.published.toString().length !== 4 ||
+        args.published > new Date().getFullYear()
+      ) {
+        throw new GraphQLError('Published year must be a valid 4-digit year', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: 'published',
+          },
+        })
+      }
+
+      if (args.genres.length === 0) {
+        throw new GraphQLError('At least one genre is required', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: 'genres',
+          },
+        })
+      }
+
       const book = { ...args, id: uuid() }
       books = books.concat(book)
 
@@ -156,7 +190,7 @@ const resolvers = {
       return book
     },
 
-    editAuthor: (root, args) => {
+    editAuthor: (_, args) => {
       const author = authors.find(a => a.name === args.name)
       if (!author) {
         return null
@@ -165,7 +199,7 @@ const resolvers = {
       const updatedAuthor = { ...author, born: args.setBornTo }
       authors = authors.map(a => (a.name === args.name ? updatedAuthor : a))
       return updatedAuthor
-    }
+    },
   },
 }
 
