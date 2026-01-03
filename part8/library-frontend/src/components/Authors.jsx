@@ -1,3 +1,7 @@
+import { useQuery } from '@apollo/client/react'
+import { ALL_AUTHORS } from '../queries'
+import EditAuthor from './EditAuthor'
+
 const AuthorList = ({ authors }) => {
   return (
     <>
@@ -13,13 +17,12 @@ const AuthorList = ({ authors }) => {
 }
 
 const Authors = () => {
-  const authors = [
-    { id: '1', name: 'Robert Martin', born: 1952, bookCount: 2 },
-    { id: '2', name: 'Martin Fowler', born: 1963, bookCount: 1 },
-    { id: '3', name: 'Fyodor Dostoevsky', born: 1821, bookCount: 2 },
-    { id: '4', name: 'Joshua Kerievsky', born: null, bookCount: 1 },
-    { id: '5', name: 'Sandi Metz', born: null, bookCount: 1 },
-  ]
+  const { loading, error, data } = useQuery(ALL_AUTHORS)
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error.message}</p>
+
+  const authorsData = data.allAuthors || []
 
   return (
     <div>
@@ -27,15 +30,17 @@ const Authors = () => {
       <table className="table">
         <thead>
           <tr>
-            <th></th>
-            <th>Born</th>
+            <th>Name</th>
+            <th>YOB</th>
             <th>Books</th>
           </tr>
         </thead>
         <tbody>
-          <AuthorList authors={authors} />
+          <AuthorList authors={authorsData} />
         </tbody>
       </table>
+
+      <EditAuthor />
     </div>
   )
 }

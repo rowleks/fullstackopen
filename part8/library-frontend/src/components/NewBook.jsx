@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useMutation } from '@apollo/client/react'
+import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
 
 const NewBook = () => {
   const [title, setTitle] = useState('')
@@ -6,11 +8,25 @@ const NewBook = () => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+  const [createBook] = useMutation(CREATE_BOOK, {
+    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+  })
 
   const submit = async event => {
     event.preventDefault()
 
-    console.log('add book...')
+    if (!title || !author || !published || genres.length === 0) {
+      return
+    }
+
+    createBook({
+      variables: {
+        title,
+        author,
+        published: Number(published),
+        genres,
+      },
+    })
 
     setTitle('')
     setPublished('')
@@ -20,23 +36,30 @@ const NewBook = () => {
   }
 
   const addGenre = () => {
+    if (!genre) return
     setGenres(genres.concat(genre))
     setGenre('')
   }
 
   return (
     <div>
-      <form onSubmit={submit} className="space-y-8">
+      <form onSubmit={submit} className="space-y-5">
         <label>
           title
           <input
             value={title}
+            type="text"
+            name="title"
+            required
             onChange={({ target }) => setTitle(target.value)}
           />
         </label>
         <label>
           author
           <input
+            required
+            type="text"
+            name="author"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
@@ -44,7 +67,9 @@ const NewBook = () => {
         <label>
           published
           <input
+            required
             type="number"
+            name="published"
             value={published}
             onChange={({ target }) => setPublished(target.value)}
           />
@@ -52,6 +77,8 @@ const NewBook = () => {
         <label>
           <input
             value={genre}
+            type="text"
+            name="genre"
             onChange={({ target }) => setGenre(target.value)}
           />
           <button
