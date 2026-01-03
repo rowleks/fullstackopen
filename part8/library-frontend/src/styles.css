@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-900;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+}
+@layer components {
+  .navbar {
+    @apply bg-white shadow-md p-4 flex space-x-4;
+  }
+
+  .navbar a {
+    @apply text-blue-500 hover:text-blue-700;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  main {
+    @apply p-6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-bold capitalize;
+  }
+
+  h1 {
+    @apply text-3xl my-4;
+  }
+
+  h2 {
+    @apply text-2xl my-3;
+  }
+
+  h3 {
+    @apply text-xl my-2;
+  }
+
+  table {
+    @apply w-full border-collapse mb-6;
+  }
+
+  th {
+    @apply bg-gray-200 text-left font-semibold p-2;
+  }
+
+  td {
+    @apply border-t border-gray-300 p-2;
+  }
+
+  input {
+    @apply border border-gray-500 rounded px-2 py-0.5 w-full;
+  }
+  label {
+    @apply block font-medium space-y-2;
+  }
+
+  form {
+    @apply max-w-md;
+  }
+
+  form button {
+    @apply bg-blue-500 text-white font-bold py-1 px-3 rounded-sm hover:bg-blue-600 cursor-pointer;
+  }
+}
+
+@layer utilities {
+  .btn {
+    @apply bg-blue-500 text-white font-bold py-2 px-4 rounded cursor-pointer;
+  }
+}
