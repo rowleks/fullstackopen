@@ -1,168 +1,118 @@
-const { v4: uuid } = require('uuid')
 const { GraphQLError } = require('graphql')
-
-let authors = [
-  {
-    name: 'Robert Martin',
-    id: 'afa51ab0-344d-11e9-a414-719c6709cf3e',
-    born: 1952,
-  },
-  {
-    name: 'Martin Fowler',
-    id: 'afa5b6f0-344d-11e9-a414-719c6709cf3e',
-    born: 1963,
-  },
-  {
-    name: 'Fyodor Dostoevsky',
-    id: 'afa5b6f1-344d-11e9-a414-719c6709cf3e',
-    born: 1821,
-  },
-  {
-    name: 'Joshua Kerievsky',
-    id: 'afa5b6f2-344d-11e9-a414-719c6709cf3e',
-  },
-  {
-    name: 'Sandi Metz',
-    id: 'afa5b6f3-344d-11e9-a414-719c6709cf3e',
-  },
-]
-
-let books = [
-  {
-    title: 'Clean Code',
-    published: 2008,
-    author: 'Robert Martin',
-    id: 'afa5b6f4-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring'],
-  },
-  {
-    title: 'Agile software development',
-    published: 2002,
-    author: 'Robert Martin',
-    id: 'afa5b6f5-344d-11e9-a414-719c6709cf3e',
-    genres: ['agile', 'patterns', 'design'],
-  },
-  {
-    title: 'Refactoring, edition 2',
-    published: 2018,
-    author: 'Martin Fowler',
-    id: 'afa5de00-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring'],
-  },
-  {
-    title: 'Refactoring to patterns',
-    published: 2008,
-    author: 'Joshua Kerievsky',
-    id: 'afa5de01-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring', 'patterns'],
-  },
-  {
-    title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
-    published: 2012,
-    author: 'Sandi Metz',
-    id: 'afa5de02-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring', 'design'],
-  },
-  {
-    title: 'Crime and punishment',
-    published: 1866,
-    author: 'Fyodor Dostoevsky',
-    id: 'afa5de03-344d-11e9-a414-719c6709cf3e',
-    genres: ['classic', 'crime'],
-  },
-  {
-    title: 'Demons',
-    published: 1872,
-    author: 'Fyodor Dostoevsky',
-    id: 'afa5de04-344d-11e9-a414-719c6709cf3e',
-    genres: ['classic', 'revolution'],
-  },
-]
+const Book = require('./models/book')
+const Author = require('./models/author')
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (_, args) => {
-      if (args.author && args.genre) {
-        return books
-          .filter(book => book.author === args.author)
-          .filter(book => book.genres.includes(args.genre))
-      }
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allBooks: async (_, args) => {
+      const filter = {}
+
       if (args.author) {
-        return books.filter(book => book.author === args.author)
+        const author = await Author.findOne({ name: args.author })
+        if (!author) {
+          return []
+        }
+        filter.author = author._id
       }
+
       if (args.genre) {
-        return books.filter(book => book.genres.includes(args.genre))
+        filter.genres = args.genre
       }
-      return books
+
+      return Book.find(filter).populate('author')
     },
-    allAuthors: (_, args) => {
-      if (!args.name) {
-        return authors
-      }
-      return authors.filter(author => author.name === args.name)
-    },
+    allAuthors: async () => Author.find({}),
   },
   Author: {
-    bookCount: root => books.filter(book => book.author === root.name).length,
+    bookCount: async root => {
+      return Book.countDocuments({ author: root._id })
+    },
   },
 
   Mutation: {
-    addBook: (_, args) => {
-      if (args.title.length < 3 || args.author.length < 3) {
+    addBook: async (_, args) => {
+      if (args.title.length < 5) {
+        throw new GraphQLError('Title must be at least 5 characters long', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+          },
+        })
+      }
+
+      if (args.author.length < 5) {
         throw new GraphQLError(
-          'Title and author must be longer than 3 characters',
+          'Author name must be at least 5 characters long',
           {
             extensions: {
               code: 'BAD_USER_INPUT',
-              invalidArgs: args.title.length < 3 ? 'title' : 'author',
+              invalidArgs: args.author,
             },
           }
         )
       }
 
-      if (
-        args.published.toString().length !== 4 ||
-        args.published > new Date().getFullYear()
-      ) {
-        throw new GraphQLError('Published year must be a valid 4-digit year', {
+      let author = await Author.findOne({ name: args.author })
+
+      if (!author) {
+        author = new Author({ name: args.author })
+        try {
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError('Saving author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author,
+              error,
+            },
+          })
+        }
+      }
+
+      const book = new Book({ ...args, author: author._id })
+
+      try {
+        await book.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
-            invalidArgs: 'published',
+            invalidArgs: args.title,
+            error,
           },
         })
       }
 
-      if (args.genres.length === 0) {
-        throw new GraphQLError('At least one genre is required', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            invalidArgs: 'genres',
-          },
-        })
-      }
-
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-
-      if (!authors.find(author => author.name === args.author)) {
-        const author = { name: args.author, id: uuid() }
-        authors = authors.concat(author)
-      }
-
-      return book
+      return book.populate('author')
     },
 
-    editAuthor: (_, args) => {
-      const author = authors.find(a => a.name === args.name)
+    editAuthor: async (_, args) => {
+      const author = await Author.findOne({ name: args.name })
+
       if (!author) {
-        return null
+        throw new GraphQLError('Author not found', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+          },
+        })
       }
 
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(a => (a.name === args.name ? updatedAuthor : a))
-      return updatedAuthor
+      author.born = args.setBornTo
+      try {
+        await author.save()
+      } catch (error) {
+        throw new GraphQLError('Updating author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error,
+          },
+        })
+      }
+      return author
     },
   },
 }
