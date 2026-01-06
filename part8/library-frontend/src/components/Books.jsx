@@ -4,11 +4,11 @@ import { ALL_BOOKS } from '../queries'
 const BookList = ({ books }) => {
   return (
     <>
-      {books.map(a => (
-        <tr key={a.id}>
-          <td className="max-w-48">{a.title}</td>
-          <td>{a.author}</td>
-          <td>{a.published}</td>
+      {books.map(b => (
+        <tr key={b.id}>
+          <td className="max-w-48">{b.title}</td>
+          <td>{b.author.name}</td>
+          <td>{b.published}</td>
         </tr>
       ))}
     </>
@@ -22,6 +22,10 @@ const Books = () => {
   if (error) return <p>Error: {error.message}</p>
 
   const booksData = data.allBooks || []
+
+  if (!booksData.length) {
+    return <div className="flex justify-center">No books found</div>
+  }
 
   return (
     <div>

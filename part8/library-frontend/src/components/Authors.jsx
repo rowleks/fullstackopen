@@ -8,7 +8,7 @@ const AuthorList = ({ authors }) => {
       {authors.map(a => (
         <tr key={a.id}>
           <td>{a.name}</td>
-          <td>{a.born}</td>
+          <td>{a.born || '—'}</td>
           <td>{a.bookCount}</td>
         </tr>
       ))}
@@ -27,18 +27,22 @@ const Authors = () => {
   return (
     <div>
       <h2>authors</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>YOB</th>
-            <th>Books</th>
-          </tr>
-        </thead>
-        <tbody>
-          <AuthorList authors={authorsData} />
-        </tbody>
-      </table>
+      {authorsData.length > 0 ? (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>YOB</th>
+              <th>Books</th>
+            </tr>
+          </thead>
+          <tbody>
+            <AuthorList authors={authorsData} />
+          </tbody>
+        </table>
+      ) : (
+        <div className="flex justify-center">No authors found</div>
+      )}
 
       <EditAuthor />
     </div>
