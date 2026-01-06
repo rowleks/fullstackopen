@@ -74,7 +74,16 @@ router.put('/:id', userExtractor, async (req, res, next) => {
     blog.likes = likes ? likes : blog.likes
 
     const updatedBlog = await blog.save()
-    await updatedBlog.populate('user', { username: 1, name: 1 })
+    await updatedBlog.populate([
+      { path: 'user', select: { username: 1, name: 1 } },
+      {
+        path: 'comments',
+        populate: {
+          path: 'user',
+          select: 'username name',
+        },
+      },
+    ])
     res.json(updatedBlog)
   } catch (error) {
     next(error)
