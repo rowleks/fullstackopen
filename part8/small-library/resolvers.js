@@ -34,6 +34,11 @@ const resolvers = {
       }
       return User.find(filter)
     },
+    allGenres: async () => {
+      const allBooks = await Book.find({})
+      const genres = allBooks.flatMap(book => book.genres)
+      return [...new Set(genres)]
+    },
   },
 
   Author: {

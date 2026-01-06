@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client/react'
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
+import { ALL_AUTHORS, ALL_BOOKS_AND_GENRES, CREATE_BOOK } from '../queries'
 
 const NewBook = () => {
   const [title, setTitle] = useState('')
@@ -9,7 +9,17 @@ const NewBook = () => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    refetchQueries: [
+      { query: ALL_BOOKS_AND_GENRES, variables: { genre: '' } },
+      { query: ALL_AUTHORS },
+    ],
+    onCompleted: () => {
+      setTitle('')
+      setPublished('')
+      setAuthor('')
+      setGenres([])
+      setGenre('')
+    },
   })
 
   const submit = async event => {
@@ -27,18 +37,20 @@ const NewBook = () => {
         genres,
       },
     })
-
-    setTitle('')
-    setPublished('')
-    setAuthor('')
-    setGenres([])
-    setGenre('')
   }
 
   const addGenre = () => {
     if (!genre) return
+    if (genres.includes(genre)) return setGenre('')
     setGenres(genres.concat(genre))
     setGenre('')
+  }
+
+  const onGenreKeyDown = event => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      addGenre()
+    }
   }
 
   return (
@@ -80,6 +92,7 @@ const NewBook = () => {
             type="text"
             name="genre"
             onChange={({ target }) => setGenre(target.value)}
+            onKeyDown={onGenreKeyDown}
           />
           <button
             onClick={addGenre}

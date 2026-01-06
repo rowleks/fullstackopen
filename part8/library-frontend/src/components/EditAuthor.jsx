@@ -5,31 +5,34 @@ import { useState } from 'react'
 
 const EditAuthor = () => {
   const [selectedOption, setSelectedOption] = useState(null)
+  const [born, setBorn] = useState('')
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
   })
   const { loading, error, data } = useQuery(ALL_AUTHORS_NAMES)
 
-  const options = data?.allAuthors.map(a => ({
-    value: a.name,
-    label: a.name,
-  }))
+  const options = data?.allAuthors
+    ? data.allAuthors.map(a => ({
+        value: a.name,
+        label: a.name,
+      }))
+    : []
 
   const onSubmit = event => {
     event.preventDefault()
 
-    if (!event.target.author.value || !event.target.born.value) {
+    if (!selectedOption || !born) {
       return
     }
 
     editAuthor({
       variables: {
         name: selectedOption.value,
-        setBornTo: Number(event.target.born.value),
+        setBornTo: Number(born),
       },
       onCompleted: () => {
         setSelectedOption(null)
-        event.target.born.value = ''
+        setBorn('')
       },
     })
   }
@@ -54,7 +57,13 @@ const EditAuthor = () => {
         </label>
         <label>
           Born
-          <input type="number" name="born" required />
+          <input
+            type="number"
+            name="born"
+            value={born}
+            onChange={({ target }) => setBorn(target.value)}
+            required
+          />
         </label>
         <button type="submit">Update author</button>
       </form>

@@ -8,9 +8,13 @@ const resolvers = require('./resolvers')
 
 const getUserFromAuthHeader = async auth => {
   if (!auth || !auth.startsWith('Bearer')) return null
-  const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
-
-  return decodedToken ? User.findById(decodedToken.id) : null
+  try {
+    const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
+    return decodedToken ? User.findById(decodedToken.id) : null
+  } catch (error) {
+    console.warn('JWT error while parsing auth header:', error.message)
+    return null
+  }
 }
 
 const startServer = port => {
