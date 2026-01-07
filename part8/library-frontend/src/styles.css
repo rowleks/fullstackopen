@@ -8,7 +8,7 @@
 }
 @layer components {
   .navbar {
-    @apply bg-white shadow-md p-4 flex gap-12 justify-center;
+    @apply bg-white shadow-md p-4 flex gap-4 md:gap-12 md:justify-center flex-wrap;
   }
 
   .navbar a {

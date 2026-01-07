@@ -6,7 +6,7 @@ import BookList from './BookList'
 const Filter = ({ genres, setGenre, activeGenre }) => {
   return (
     <>
-      <div className="flex items-center gap-1.5 my-5">
+      <div className="flex items-center gap-1.5 my-5 flex-wrap">
         {genres.map(genre => (
           <button
             className={`px-3 py-1 rounded-3xl cursor-pointer ${
