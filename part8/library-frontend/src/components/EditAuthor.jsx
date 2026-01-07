@@ -7,7 +7,19 @@ const EditAuthor = () => {
   const [selectedOption, setSelectedOption] = useState(null)
   const [born, setBorn] = useState('')
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => ({
+        allAuthors: allAuthors.map(author =>
+          author.name === response.data.editAuthor.name
+            ? { ...author, ...response.data.editAuthor }
+            : author
+        ),
+      }))
+    },
+    onCompleted: () => {
+      setSelectedOption(null)
+      setBorn('')
+    },
   })
   const { loading, error, data } = useQuery(ALL_AUTHORS_NAMES)
 
