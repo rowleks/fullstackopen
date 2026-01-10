@@ -1,3 +1,5 @@
+import { parseExerciseArgs } from "./utils";
+
 interface Results {
   periodLength: number;
   trainingDays: number;
@@ -9,8 +11,8 @@ interface Results {
 }
 
 const calculateExercises = (
-  excerciseHours: number[],
-  target: number
+  target: number,
+  excerciseHours: number[]
 ): Results => {
   const periodLength = excerciseHours.length;
   const trainingDays = excerciseHours.filter((e) => e > 0).length;
@@ -36,4 +38,11 @@ const calculateExercises = (
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { target, hours } = parseExerciseArgs(process.argv);
+  console.log(calculateExercises(target, hours));
+} catch (error) {
+  if (error instanceof Error) {
+    console.log("Error:", error.message);
+  }
+}

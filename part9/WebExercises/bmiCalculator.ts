@@ -1,3 +1,5 @@
+import { parseBmiArgs } from "./utils";
+
 const calculateBmi = (height: number, weight: number) => {
   const bmi = weight / (height / 100) ** 2;
   if (bmi < 18.5) {
@@ -11,4 +13,11 @@ const calculateBmi = (height: number, weight: number) => {
   }
 };
 
-console.log(calculateBmi(180, 74));
+try {
+  const { height, weight } = parseBmiArgs(process.argv);
+  console.log(calculateBmi(height, weight));
+} catch (error) {
+  if (error instanceof Error) {
+    console.log("Error:", error.message);
+  }
+}
