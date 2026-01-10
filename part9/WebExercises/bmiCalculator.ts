@@ -1,6 +1,10 @@
 import { parseBmiArgs } from "./utils";
 
-const calculateBmi = (height: number, weight: number) => {
+export const calculateBmi = (height: number, weight: number) => {
+  if (isNaN(height) || isNaN(weight)) {
+    throw new Error("Malformatted parametera");
+  }
+
   const bmi = weight / (height / 100) ** 2;
   if (bmi < 18.5) {
     return "Underweight";
@@ -13,11 +17,13 @@ const calculateBmi = (height: number, weight: number) => {
   }
 };
 
-try {
-  const { height, weight } = parseBmiArgs(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (error) {
-  if (error instanceof Error) {
-    console.log("Error:", error.message);
+if (require.main === module) {
+  try {
+    const { height, weight } = parseBmiArgs(process.argv);
+    console.log(calculateBmi(height, weight));
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("Error:", error.message);
+    }
   }
 }
