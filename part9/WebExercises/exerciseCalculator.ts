@@ -10,10 +10,14 @@ interface Results {
   average: number;
 }
 
-const calculateExercises = (
+export const calculateExercises = (
   target: number,
   excerciseHours: number[]
 ): Results => {
+  if (isNaN(target) || excerciseHours.some((h) => isNaN(h))) {
+    throw new Error("Malformed parameters");
+  }
+
   const periodLength = excerciseHours.length;
   const trainingDays = excerciseHours.filter((e) => e > 0).length;
   const average =
@@ -38,11 +42,13 @@ const calculateExercises = (
   };
 };
 
-try {
-  const { target, hours } = parseExerciseArgs(process.argv);
-  console.log(calculateExercises(target, hours));
-} catch (error) {
-  if (error instanceof Error) {
-    console.log("Error:", error.message);
+if (require.main === module) {
+  try {
+    const { target, hours } = parseExerciseArgs(process.argv);
+    console.log(calculateExercises(target, hours));
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("Error:", error.message);
+    }
   }
 }

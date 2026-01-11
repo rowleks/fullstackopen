@@ -2,7 +2,7 @@ import { parseBmiArgs } from "./utils";
 
 export const calculateBmi = (height: number, weight: number) => {
   if (isNaN(height) || isNaN(weight)) {
-    throw new Error("Malformatted parametera");
+    throw new Error("Malformatted parameters");
   }
 
   const bmi = weight / (height / 100) ** 2;
