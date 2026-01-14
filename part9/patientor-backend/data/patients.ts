@@ -1,6 +1,7 @@
 import { type Patient } from "../types/types";
+import { validateEntry } from "../utils";
 
-const data: Patient[] = [
+const data = [
   {
     id: "d2773336-f723-11e9-8f0b-362b9e155667",
     name: "John McClane",
@@ -43,4 +44,10 @@ const data: Patient[] = [
   },
 ];
 
-export default data;
+const patientsData: Patient[] = data.map((obj) => {
+  const typedData = validateEntry(obj) as Patient;
+  typedData.id = obj.id;
+  return typedData;
+});
+
+export default patientsData;
