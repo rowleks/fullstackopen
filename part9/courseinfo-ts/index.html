@@ -1,13 +1,40 @@
 <!doctype html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @layer base {
+        h1 {
+          @apply text-3xl font-bold;
+        }
+        h2 {
+          @apply text-2xl font-medium;
+        }
+        h3 {
+          @apply text-xl font-bold;
+        }
+
+        body {
+          @apply p-6 bg-gray-200;
+        }
+
+        a {
+          @apply text-blue-600 hover:underline;
+        }
+
+        
+      }
+    </style>
     <title>courseinfo-ts</title>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
+
 </html>
