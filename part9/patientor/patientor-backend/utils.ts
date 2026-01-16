@@ -9,6 +9,7 @@ export const PatientEntrySchema = z.object({
   ssn: z.string().min(7),
   gender: z.enum(Gender),
   occupation: z.string().min(1),
+  entries: z.array(z.unknown()).optional(),
 });
 
 export const validateEntry = (entryObj: unknown): PatientEntry => {

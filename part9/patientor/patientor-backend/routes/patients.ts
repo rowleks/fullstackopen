@@ -37,6 +37,15 @@ router.get("/", (_req, res: Response<NSPatient[]>) => {
   res.send(patientService.getNSPatients());
 });
 
+router.get("/:id", (req, res: Response<Patient | { error: string }>) => {
+  const patient = patientService.getPatientById(req.params.id);
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.status(404).send({ error: "Patient not found" });
+  }
+});
+
 router.post(
   "/",
   parseResBody,
