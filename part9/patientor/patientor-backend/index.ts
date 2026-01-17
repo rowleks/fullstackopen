@@ -1,5 +1,6 @@
 import express from "express";
 import patientRouter from "./routes/patients";
+import diagnosesRouter from "./routes/diagnoses";
 import cors from "cors";
 
 const app = express();
@@ -9,6 +10,7 @@ app.use(cors());
 const PORT = 3003;
 
 app.use("/api/patients", patientRouter);
+app.use("/api/diagnoses", diagnosesRouter);
 
 app.get("/api/ping", (_req, res) => {
   console.log("someone pinged here");

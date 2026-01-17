@@ -15,3 +15,9 @@ export type PatientEntry = z.infer<typeof PatientEntrySchema>;
 export type Patient = PatientEntry & { id: string };
 
 export type NSPatient = Omit<Patient, "ssn">;
+
+export interface Diagnoses {
+  code: string;
+  name: string;
+  latin?: string;
+}
