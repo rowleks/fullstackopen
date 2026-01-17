@@ -1,23 +1,74 @@
-import { z } from "zod";
-import { PatientEntrySchema } from "../utils";
-
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface Entry {}
-
 export enum Gender {
   Male = "male",
   Female = "female",
   Other = "other",
 }
-
-export type PatientEntry = z.infer<typeof PatientEntrySchema>;
-
-export type Patient = PatientEntry & { id: string };
-
-export type NSPatient = Omit<Patient, "ssn">;
-
 export interface Diagnoses {
   code: string;
   name: string;
   latin?: string;
 }
+
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UnionOmit<T, K extends keyof any> = T extends unknown ? Omit<T, K> : never;
+
+interface BaseEntry {
+  id: string;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes?: Array<Diagnoses["code"]>;
+}
+
+export enum HealthCheckRating {
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3,
+}
+
+interface HealthCheckEntry extends BaseEntry {
+  type: "HealthCheck";
+  healthCheckRating: HealthCheckRating;
+}
+
+interface HospitalEntry extends BaseEntry {
+  type: "Hospital";
+  discharge: {
+    date: string;
+    criteria: string;
+  };
+}
+
+interface OccupationalHealthcareEntry extends BaseEntry {
+  type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
+export type Entry =
+  | HospitalEntry
+  | OccupationalHealthcareEntry
+  | HealthCheckEntry;
+
+interface PatientBase {
+  name: string;
+  dateOfBirth: string;
+  gender: Gender;
+  occupation: string;
+  ssn: string;
+}
+
+export interface PatientEntry extends PatientBase {
+  entries: Array<UnionOmit<Entry, "id">>;
+}
+
+export interface Patient extends PatientBase {
+  id: string;
+  entries: Entry[];
+}
+
+export type NSPatient = UnionOmit<Patient, "ssn">;

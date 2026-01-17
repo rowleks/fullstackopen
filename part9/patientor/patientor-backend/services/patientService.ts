@@ -11,10 +11,13 @@ const getNSPatients = (): NSPatient[] => {
 };
 
 const addPatient = (entry: PatientEntry): Patient => {
+
   const newEntry = {
     id: uuid(),
     ...entry,
+    entries: entry.entries.map((e) => ({ ...e, id: uuid() })),
   };
+
 
   patients.push(newEntry);
 

@@ -1,4 +1,4 @@
-import { Gender, PatientEntry } from "./types/types";
+import { Gender } from "./types/types";
 import { z } from "zod";
 
 export const PatientEntrySchema = z.object({
@@ -11,7 +11,3 @@ export const PatientEntrySchema = z.object({
   occupation: z.string().min(1),
   entries: z.array(z.unknown()).optional(),
 });
-
-export const validateEntry = (entryObj: unknown): PatientEntry => {
-  return PatientEntrySchema.parse(entryObj);
-};
