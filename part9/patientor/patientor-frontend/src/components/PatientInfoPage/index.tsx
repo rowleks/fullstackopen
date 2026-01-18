@@ -1,11 +1,12 @@
 import { Box, Typography } from "@mui/material";
-import { Patient } from "../types";
+import { Patient } from "../../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import TransgenderIcon from "@mui/icons-material/Transgender";
 import { useEffect, useState } from "react";
-import patients from "../services/patients";
+import patientService from "../../services/patients";
 import axios from "axios";
+import EntriesInfo from "./EntriesInfo";
 
 type PatientInfoProps = {
   patientId: string | null | undefined;
@@ -17,7 +18,7 @@ const PatientInfo = ({ patientId }: PatientInfoProps) => {
 
   useEffect(() => {
     if (!patientId) return;
-    patients
+    patientService
       .getById(patientId)
       .then((data: Patient) => {
         setPatient(data);
@@ -54,8 +55,13 @@ const PatientInfo = ({ patientId }: PatientInfoProps) => {
           <TransgenderIcon fontSize="large" />
         )}
       </Box>
-      <Typography>ssn: {ssn}</Typography>
-      <Typography>occupation: {occupation}</Typography>
+
+      <Box>
+        <Typography>ssn: {ssn}</Typography>
+        <Typography>occupation: {occupation}</Typography>
+      </Box>
+
+      <EntriesInfo entries={patient.entries} />
     </>
   );
 };

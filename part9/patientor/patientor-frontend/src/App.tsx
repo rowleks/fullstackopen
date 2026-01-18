@@ -6,7 +6,7 @@ import { Button, Divider, Container, Typography } from "@mui/material";
 import { apiBaseUrl } from "./constants";
 
 import PatientListPage from "./components/PatientListPage";
-import PatientInfo from "./components/PatientInfo";
+import PatientInfo from "./components/PatientInfoPage";
 
 const App = () => {
   const match = useMatch("/patients/:id");
