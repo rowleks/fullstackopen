@@ -17,6 +17,7 @@ import AddPatientModal from "../AddPatientModal";
 import HealthRatingBar from "../HealthRatingBar";
 
 import patientService from "../../services/patients";
+import { Link } from "react-router-dom";
 
 const PatientListPage = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -64,14 +65,14 @@ const PatientListPage = () => {
 
   return (
     <div className="App">
-      <Box>
-        <Typography align="center" variant="h6">
+      <Box sx={{ marginBlock: "2rem" }}>
+        <Typography align="center" variant="h4">
           Patient list
         </Typography>
       </Box>
       <Table style={{ marginBottom: "1em" }}>
         <TableHead>
-          <TableRow>
+          <TableRow sx={{ fontWeight: "bold" }}>
             <TableCell>Name</TableCell>
             <TableCell>Gender</TableCell>
             <TableCell>Occupation</TableCell>
@@ -81,7 +82,9 @@ const PatientListPage = () => {
         <TableBody>
           {Object.values(patients).map((patient: Patient) => (
             <TableRow key={patient.id}>
-              <TableCell>{patient.name}</TableCell>
+              <TableCell>
+                <Link to={`/patients/${patient.id}`}>{patient.name}</Link>
+              </TableCell>
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
               <TableCell>

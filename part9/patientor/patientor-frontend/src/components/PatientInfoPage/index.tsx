@@ -60,8 +60,8 @@ const PatientInfo = ({ patientId }: PatientInfoProps) => {
         )}
       </Box>
 
-      <Box>
-        <Typography>ssn: {ssn}</Typography>
+      <Box sx={{ textTransform: "capitalize" }}>
+        <Typography>SSN: {ssn}</Typography>
         <Typography>occupation: {occupation}</Typography>
       </Box>
 
