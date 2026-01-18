@@ -32,11 +32,15 @@ const PatientInfo = ({ patientId }: PatientInfoProps) => {
   }, [patientId]);
 
   if (!patient) {
-    return (
-      <Typography variant="h6" sx={{ marginBlock: "2rem", color: "red" }}>
-        {error || "Unable to fetch patient data"}
-      </Typography>
-    );
+    if (error) {
+      return (
+        <Typography variant="h6" sx={{ marginBlock: "2rem", color: "red" }}>
+          {error}
+        </Typography>
+      );
+    }
+
+    return <Typography>Loading...</Typography>;
   }
 
   const { name, gender, ssn, occupation } = patient;
@@ -61,7 +65,9 @@ const PatientInfo = ({ patientId }: PatientInfoProps) => {
         <Typography>occupation: {occupation}</Typography>
       </Box>
 
-      <EntriesInfo entries={patient.entries} />
+      <Box>
+        <EntriesInfo entries={patient.entries} />
+      </Box>
     </>
   );
 };

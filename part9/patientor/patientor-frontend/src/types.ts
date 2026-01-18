@@ -1,9 +1,4 @@
-export interface Diagnoses {
-  code: string;
-  name: string;
-  latin?: string;
-}
-
+// Patient and Entry Types
 export enum Gender {
   Male = "male",
   Female = "female",
@@ -70,4 +65,11 @@ export interface Patient extends PatientBase {
 
 export interface PatientFormValues extends PatientBase {
   entries: Array<UnionOmit<Entry, "id">>;
+}
+
+// Diagnosis Types
+export interface Diagnoses {
+  code: string;
+  name: string;
+  latin?: string;
 }

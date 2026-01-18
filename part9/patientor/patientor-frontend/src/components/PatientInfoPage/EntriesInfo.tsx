@@ -1,25 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { Entry } from "../../types";
-
-const EntryDescription = ({
-  description,
-  date,
-}: {
-  description: string;
-  date: string;
-}) => {
-  return (
-    <>
-      <Typography variant="subtitle1">
-        {date}: <i>{description}</i>
-      </Typography>
-    </>
-  );
-};
-
-const DiagnosesInfo = ()=> {
-    
-}
+import { EntryDescription, DiagnosesInfo } from "./EntriesData";
 
 const EntriesInfo = ({ entries }: { entries: Entry[] }) => {
   return (
@@ -36,6 +17,7 @@ const EntriesInfo = ({ entries }: { entries: Entry[] }) => {
               date={entry.date}
               description={entry.description}
             />
+            <DiagnosesInfo diagnosisCodes={entry.diagnosisCodes} />
           </Box>
         ))
       )}
