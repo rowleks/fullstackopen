@@ -1,4 +1,9 @@
-import { Gender, HealthCheckRating, PatientEntry } from "./types/types";
+import {
+  Gender,
+  HealthCheckRating,
+  NewEntry,
+  PatientEntry,
+} from "./types/types";
 import { z } from "zod";
 
 const BaseEntrySchema = z.object({
@@ -56,3 +61,5 @@ export const PatientEntrySchema: z.ZodType<PatientEntry> = z.object({
   occupation: z.string().min(1),
   entries: z.array(EntrySchema),
 });
+
+export const NewEntrySchema: z.ZodType<NewEntry> = EntrySchema;
