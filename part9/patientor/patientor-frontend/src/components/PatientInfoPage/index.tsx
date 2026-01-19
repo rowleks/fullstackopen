@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import patientService from "../../services/patients";
 import axios from "axios";
 import EntriesInfo from "./EntriesInfo";
+import AddEntrySection from "../AddEntrySection";
 
 type PatientInfoProps = {
   patientId: string | null | undefined;
@@ -30,7 +31,6 @@ const PatientInfo = ({ patientId }: PatientInfoProps) => {
         }
       });
   }, [patientId]);
-
   if (!patient) {
     if (error) {
       return (
@@ -63,6 +63,10 @@ const PatientInfo = ({ patientId }: PatientInfoProps) => {
       <Box sx={{ textTransform: "capitalize" }}>
         <Typography>SSN: {ssn}</Typography>
         <Typography>occupation: {occupation}</Typography>
+      </Box>
+
+      <Box sx={{ marginBlock: "3rem" }}>
+        <AddEntrySection patientId={patientId!} onEntryAdded={setPatient} />
       </Box>
 
       <Box>

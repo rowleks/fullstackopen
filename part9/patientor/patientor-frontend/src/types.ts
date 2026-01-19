@@ -50,6 +50,8 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
+export type NewEntry = UnionOmit<Entry, "id">;
+
 interface PatientBase {
   name: string;
   dateOfBirth: string;

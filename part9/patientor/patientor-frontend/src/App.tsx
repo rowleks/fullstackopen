@@ -1,9 +1,5 @@
-import { useEffect } from "react";
-import axios from "axios";
 import { Route, Link, Routes, useMatch } from "react-router-dom";
 import { Button, Divider, Container, Typography } from "@mui/material";
-
-import { apiBaseUrl } from "./constants";
 
 import PatientListPage from "./components/PatientListPage";
 import PatientInfo from "./components/PatientInfoPage";
@@ -12,10 +8,6 @@ const App = () => {
   const match = useMatch("/patients/:id");
 
   const matchedPatient = match ? match.params.id : null;
-
-  useEffect(() => {
-    void axios.get<void>(`${apiBaseUrl}/ping`);
-  }, []);
 
   return (
     <div className="App">
