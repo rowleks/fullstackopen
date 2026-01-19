@@ -32,6 +32,9 @@ importers:
       react-router-dom:
         specifier: ^6.16.0
         version: 6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      title-case:
+        specifier: ^4.3.2
+        version: 4.3.2
     devDependencies:
       '@types/react':
         specifier: ^18.2.15
@@ -1271,6 +1274,9 @@ packages:
 
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
+
+  title-case@4.3.2:
+    resolution: {integrity: sha512-I/nkcBo73mO42Idfv08jhInV61IMb61OdIFxk+B4Gu1oBjWBPOLmhZdsli+oJCVaD+86pYQA93cJfFt224ZFAA==}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -2581,6 +2587,8 @@ snapshots:
   supports-preserve-symlinks-flag@1.0.0: {}
 
   text-table@0.2.0: {}
+
+  title-case@4.3.2: {}
 
   to-regex-range@5.0.1:
     dependencies:
